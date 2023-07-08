@@ -1,0 +1,11 @@
+<div id="<%= dom_id person %>">
+  <p>
+    <strong>Name:</strong>
+    <%= person.name %>
+  </p>
+
+  <p>
+     Added <%= time_tag person.created_at, "data-local": "time-ago" %>
+  </p>
+
+</div>

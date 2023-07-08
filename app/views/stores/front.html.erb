@@ -1,0 +1,11 @@
+<p style="color: green"><%= notice %></p>
+
+<h1>Store Front</h1>
+
+<div id="people">
+  <% @people.each do |person| %>
+    <%= render "frontperson", person: person %>
+  <% end %>
+</div>
+
+

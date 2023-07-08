@@ -1,0 +1,13 @@
+<%= turbo_stream_from @person %>
+
+<p style="color: green"><%= notice %></p>
+
+<%= render @person %>
+<%= render "people/orders", person: @person %>
+
+<div>
+  <%= link_to "Edit this person", edit_person_path(@person) %> |
+  <%= link_to "Back to people", people_path %>
+
+  <%= button_to "Destroy this person", @person, method: :delete %>
+</div>

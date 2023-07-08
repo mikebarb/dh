@@ -1,0 +1,30 @@
+<div id="<%= dom_id person %>">
+  <p>
+    <strong>Name:</strong>
+    <%= person.name %>
+  </p>
+
+  <p>
+  <strong>=> Last Drink:</strong>
+     <% #byebug %>
+     <% if person.last_order %>
+	 <%= person.last_order.drink %>
+     <% end %>
+  </p>
+
+  <p>
+  <strong>=> Status:</strong>
+     <% #byebug %>
+     <% if person.last_order %>
+	    <%= person.last_order.status %>
+     <% end %>
+  </p>
+
+  <p>
+  <strong>=> Ordered:</strong>
+     <% if person.last_order %>
+       <%= time_tag person.last_order.created_at, "data-local": "time-ago" %>
+     <% end %>
+  </p>
+
+</div>

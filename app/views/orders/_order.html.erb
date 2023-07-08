@@ -1,0 +1,6 @@
+<div id="<%= dom_id(order) %>" >
+  <%= order.drink %>
+  - <%= time_tag order.created_at, "data-local": "time-ago" %>
+  - ( <%= order.status %>)
+</div>
+

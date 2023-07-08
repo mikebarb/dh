@@ -1,0 +1,71 @@
+class StoresController < ApplicationController
+
+  # GET /stores/front or /stores/front.json
+  def front
+     logger.debug "step 1"
+
+#     	  @people = Person
+#               .order("lower(name)")
+
+
+
+ @people = Person
+	 .select('distinctOrders.*, people.*')
+	 .joins('LEFT OUTER JOIN (SELECT DISTINCT ON (person_id) * FROM orders ORDER BY person_id, Updated_at DESC)
+                                 as distinctOrders ON distinctOrders.person_id = people.id')
+
+
+
+#     logger.debug @people.inspect
+
+     logger.debug "step 2"
+
+#     connection = ActiveRecord::Base.connection
+#     connection.prepare('getpeople', "select * FROM Person")
+#     result = connection.exec_prepared('getpeople')
+#      @people = Person.find_by_sql(" SELECT * FROM People ")
+#     @people = Person.find_by_sql(" SELECT Orders.*  FROM Orders  INNER JOIN People ON Orders.person_id = People.id ")
+
+#     @people = Person.find_by_sql(" SELECT *  FROM People LEFT JOIN Orders ON People.id = Orders.person_id ")
+
+#     @people = Person.left_outer_joins(:orders).includes(:orders)
+
+     logger.debug "step 3"
+
+#     logger.debug @people.inspect
+
+#     logger.debug result.inspect
+     logger.debug "step 4"
+
+     byebug
+     ### Dan ### Order.select('DISTINCT ON ("person_id") *').order(:person_id, updated_at: :desc).joins("INNER JOIN people on people.id = orders.person_id")
+     #This seems to work, only problem is not retreiving all columns, might relate to db??
+     #Person.select('DISTINCT ON (orders.person_id) orders.*, people.*').joins("INNER JOIN orders on orders.person_id = people.id").order("orders.person_id ASC", "orders.updated_at DESC")
+#----------------------------------------------------------------------------------------------
+     
+     
+     
+
+     #Person.select('distinctOrders.*, people.*').joins('LEFT OUTER JOIN (SELECT DISTINCT ON (person_id) * FROM orders ORDER BY person_id, Updated_at DESC) as distinctOrders ON distinctOrders.person_id = people.id')
+     #This is an option where person table is the source, as I figure you might want to list all the people regardless of whether they have a drink or not? In this case you can probably use some sort of outer join. 
+     #### +++ ### result = Order.select('DISTINCT ON ("person_id") *').includes(:person).order(:person_id, updated_at: :desc)
+#     @people = result
+
+#    logger.debug "@people: " + @people.inspect
+#    @orders = Order.all
+#    logger.debug "@orders: " + @orders.inspect
+#    @buttons = Button
+#               .order(:group, :seq, :name)
+  end
+
+  # GET /people/1 or /people/1.json
+  def back
+  end
+
+  # GET /stores/ready
+  def ready
+    @person = Person.new
+  end
+
+end
+
