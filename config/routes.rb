@@ -5,6 +5,7 @@ Rails.application.routes.draw do
 
   get 'stores/front', as: :shop_front
   get 'stores/back',  as: :shop_back
+  post 'stores/orderdrink', as: :stores_orderdrink
 
   # Defines the root path route ("/")
   # root "articles#index"

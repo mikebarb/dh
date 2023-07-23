@@ -10,11 +10,11 @@
   </section>
 
   <section id="people_section">
-    <div id="people" class="mx-auto">
+    <table id="people" class="mx-auto">
       <% @people.each do |person| %>
         <%= render "frontperson", person: person %>
       <% end %>
-    </div>
+    </table>
   </section>
 
 <section id="request_section">

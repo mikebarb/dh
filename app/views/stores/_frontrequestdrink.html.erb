@@ -1,0 +1,16 @@
+<turbo-frame id="turbo_request_order">
+    <% #byebug %>
+    <% if flash.notice %>
+        <div id="flashNotice" data-filter-target='requestNotice' style="color: green"><%= flash.notice %></div>
+    <% else %>
+        <div id="flashNotice" data-filter-target='requestNotice' style="color: red"><%= flash.alert %></div>
+    <% end %>
+    <%= form_with url: "orderdrink", method: :post do |form| %>
+    Your order: <br>
+    <%= form.hidden_field :id, value:"testid", :data => { :filter_target => 'requestPersonId' } %>
+    <%= form.text_area :name, size: "40x1", :data => { :filter_target => 'requestName' } %>
+    <%= form.text_area :drink, size: "40x1", :data => { :filter_target => 'requestDrink' } %>
+    <%= form.submit "order" %>
+    <%= form.submit "remove" %>
+    <% end %>
+</turbo-frame>
