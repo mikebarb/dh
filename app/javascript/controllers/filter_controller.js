@@ -15,7 +15,7 @@ export default class extends Controller {
   }
 
   //--------------------------------------------------------------
-  // invoked when the content of the filter Text filed changes.
+  // invoked when the content of the filter Text field changes.
   // it then invokes soFilter()
   changeFilterText() {
     const textElement = this.filterTextTarget
@@ -27,8 +27,10 @@ export default class extends Controller {
   selectPerson(){
     console.log("selectPerson called")
     //clear the flash notice html div field
-    this.requestNoticeTarget.innerText = ""
-    // get the element (td) that made this call
+    if( this.hasRequestNoticeTarget){
+      this.requestNoticeTarget.innerText = ""
+    }
+      // get the element (td) that made this call
     const personNode = event.currentTarget
     // data attributes are held in the parent element (tr)
     const personParentNode = personNode.parentNode

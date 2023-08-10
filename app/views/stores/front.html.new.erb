@@ -10,18 +10,18 @@
   </section>
 
   <section id="people_section">
-    <table id="people" class="mx-auto">
+    <div id="people" class="mx-auto">
       <% @people.each do |person| %>
         <%= render "frontperson", person: person %>
       <% end %>
-    </table>
+    </div>
   </section>
 
-<section id="request_section">
-  <%= render "frontrequestdrink" %>
-</section>
-
+  <section id="request_section">
+    <%= render "frontrequestdrink" %>
+  </section>
 </div>
+
 <footer id="page_footer">
   <nav>
     <ul>
