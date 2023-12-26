@@ -6,11 +6,15 @@
         <div id="flashNotice" data-filter-target='requestNotice' style="color: red"><%= flash.alert %></div>
     <% end %>
     <%= form_with url: "orderdrink", method: :post do |form| %>
-    Your order: <br>
-    <%= form.hidden_field :id, value:"testid", :data => { :filter_target => 'requestPersonId' } %>
-    <%= form.text_area :name, size: "40x1", :data => { :filter_target => 'requestName' } %>
-    <%= form.text_area :drink, size: "40x1", :data => { :filter_target => 'requestDrink' } %>
-    <%= form.submit "order" %>
-    <%= form.submit "remove" %>
+    <div class="flex flex-col"> 
+        <div>Your order: </div>
+        <%= form.hidden_field :id, value:"testid", :data => { :filter_target => 'requestPersonId' } %>
+        <%= form.text_area :name,  size: "40x1", class: "bg-red-500  w-full", :data => { :filter_target => 'requestName'     } %>
+        <%= form.text_area :drink, size: "40x1", class: "bg-blue-500 w-full", :data => { :filter_target => 'requestDrink'    } %>
+        <div class="flex flex-row w-full justify-between border border-black border-2">
+            <%= form.submit value: "order",  class: "bg-green-500 border border-white border-4 rounded-full hover:bg-green-800 w-5/12 text-white font-bold py-2 px-4" %>
+            <%= form.submit value: "remove", class: "bg-red-500   border border-white border-4 rounded-full hover:bg-red-800   w-5/12 text-white font-bold py-2 px-4" %>
+        </div>
+    </div>
     <% end %>
 </turbo-frame>

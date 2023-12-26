@@ -1,4 +1,4 @@
-FROM ruby:3.2
+FROM ruby:3.2.2
 LABEL maintainer="mike@mikebarb.net"
 #RUN apt-get update -yqq && apt-get install -yqq --no-install-recommends \
 #nodejs

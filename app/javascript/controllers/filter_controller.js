@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["requestNotice", "filterText", "person", "requestPersonId", "requestName", "requestDrink"]
+  static targets = ["requestNotice", "filterText", "person", "requestPersonId", "requestName", "requestDrink", "addPersonName", "requestPersonId1", "addPersonButton" ]
   
   connect() {
     console.log("filter_controller connected", this.element)
@@ -19,13 +19,13 @@ export default class extends Controller {
   // it then invokes soFilter()
   changeFilterText() {
     const textElement = this.filterTextTarget
-    console.log("text changed in filterTextField", textElement.value)
+    //console.log("text changed in filterTextField", textElement.value)
     this.doFilter()
   }
   //--------------------------------------------------------------
   // select person and put details in ordering section
   selectPerson(){
-    console.log("selectPerson called")
+    //console.log("selectPerson called")
     //clear the flash notice html div field
     if( this.hasRequestNoticeTarget){
       this.requestNoticeTarget.innerText = ""
@@ -44,17 +44,32 @@ export default class extends Controller {
   //---------------------------------------------------------------
   // Filters all the people by name 
   // input: the text field
-  // operation: shows or hides the table row dependant on
-  //            if the text field text can be found in the name.
+  // operation: 1. shows or hides the table row dependant on
+  //               if the text field text can be found in the name.
+  //            2. Sets flagExactMatch = TRUE if anyone has a name 
+  //               exactly matches the search script. 
+  //               Otherwise, set to FALSE.
+  //               Can only add a person if a person's name does 
+  //               not already exist. 
   doFilter(){
-    console.log("filter function requested", this.element)
+    //console.log("filter function requested", this.element)
+    
+    // initialise canAddName - default to prevent adding a person
+    let canAddName = true
     
     // get the text to use as the filter
-    const filterText = this.filterTextTarget.value.toLowerCase()
+    const filterText = this.filterTextTarget.value.trim().toLowerCase()
     //console.log("filterTextField: ", filterText)
-    
+
+    // get the button that need to be displayed or hidden - addPersonName
+    const addPersonButton = this.addPersonButtonTarget
+
     // ensure there are people on the page
     if(this.hasPersonTarget) {
+      // As there are people, set canAddName to allow adding another
+      // person unless we find an exact match.
+      canAddName = true
+
       // get a array of all the nodes (tr) containing each person
       const allPeople  =  this.personTargets;
       //console.log("list all the People  - allPeople", allPeople);
@@ -66,8 +81,21 @@ export default class extends Controller {
           node.style.display = ''
         } else {
           node.style.display = 'none'
-        }      
+        }
+        // Check if this person is an exact match
+         if(canAddName){
+          if(node.getAttribute('data_name').toLowerCase().trim().normalize() === filterText.normalize()){
+            canAddName = false
+          }
+        }
       });
+      if(canAddName){
+        this.addPersonNameTarget.value = this.filterTextTarget.value.trim()
+        addPersonButton.hidden = false
+      }else{
+        this.addPersonNameTarget.value = ""
+        addPersonButton.hidden = true
+      }
     }
   };
 

@@ -1,30 +1,43 @@
 <header id="page_header">
-  <h1>Store Front</h1>
+  <h1 class="bg-emerald-500 border-4 max-w-2xl mx-auto text-center">Store Front</h1>
 </header>
-<p style="color: green"><%= notice %></p>
+<p class="bg-orange-500"><%= notice %></p>
 <div data-controller="filter">
-  <section id="filter_section">
+  <section class="bg-red-500" id="filter_section">
       <input data-filter-target="filterText" data-action="keyup->filter#changeFilterText" type="text">
-      <button data-action="click->filter#requestFilter">Filter</button>
-      <button data-action="click->filter#doSort">Sort</button>
+      <button data-action="click->filter#requestFilter" class="bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Filter</button>
+      <button data-action="click->filter#doSort" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Sort</button>
+      <turbo-frame id="turbo_request_order">
+        <% #byebug %>
+        <% if flash.notice %>
+            <div id="flashNotice" data-filter-target='requestNotice' style="color: green"><%= flash.notice %></div>
+        <% else %>
+            <div id="flashNotice" data-filter-target='requestNotice' style="color: red"><%= flash.alert %></div>
+        <% end %>
+        <%= form_with url: "addperson", method: :post do |form| %>
+          <%= form.hidden_field :id, value:"testid1", :data => { :filter_target => 'requestPersonId1' } %>
+          <%= form.text_area :name, size: "40x1", class:"hidden", :data => { :filter_target => 'addPersonName' } %>
+          <%= form.submit "addperson", class:"bg-green-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded", :data => { :filter_target => 'addPersonButton'} %>
+        <% end %>
+    </turbo-frame>
   </section>
 
-  <section id="people_section">
-    <p class="text-blue-400"> test paragraph </p>
-    <table id="people" class="mx-auto">
+  <section class="bg-blue-500 flex flex-col" id="people_section">
+    <div id="people">
       <% @people.each do |person| %>
+        <% logger.debug ("person:" + person.inspect) %>
         <%= render "frontperson", person: person %>
       <% end %>
-    </table>
+    </div>
   </section>
 
-<section id="request_section">
+<section class="bg-yellow-500" id="request_section">
   <%= render "frontrequestdrink" %>
 </section>
 
 </div>
-<footer id="page_footer">
-  <nav>
+<footer class="bg-pink-500 grid place-content-center" id="page_footer">
+  <nav class="bg-purple-500">
     <ul>
       <li><a href="#">Home</a></li>
       <li><a href="#">Brewster</a></li>

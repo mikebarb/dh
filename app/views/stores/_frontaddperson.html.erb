@@ -1,0 +1,14 @@
+<turbo-frame id="turbo_request_order">
+    <% #byebug %>
+    <% if flash.notice %>
+        <div id="flashNotice" data-filter-target='requestNotice' style="color: green"><%= flash.notice %></div>
+    <% else %>
+        <div id="flashNotice" data-filter-target='requestNotice' style="color: red"><%= flash.alert %></div>
+    <% end %>
+    <%= form_with url: "addperson", method: :post do |form| %>
+    To add person: <br>
+    <%= form.hidden_field :id, value:"testid1", :data => { :filter_target => 'requestPersonId1' } %>
+    <%= form.text_area :name, size: "40x1", :data => { :filter_target => 'addPersonName' } %>
+    <%= form.submit "addperson" %>
+    <% end %>
+</turbo-frame>

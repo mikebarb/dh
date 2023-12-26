@@ -10,6 +10,25 @@ class StoresController < ApplicationController
     @people = Person.includes(:last_order).all
   end
 
+  # POST /people or /people.json
+  def addperson
+    @addperson = Person.new
+    # @addperson = Person.new(addperson_params)
+    @addperson.name = params["name"]
+    respond_to do |format|
+      if @addperson.save
+        #format.html { redirect_to shop_front_url, notice: "Person was successfully created." }
+        #@people = Person.includes(:last_order).all
+        #format.html {render :front}
+        format.html { render :_frontperson, locals: { person: @addperson }}
+        format.json { render :show, status: :created, location: @addperson }
+      else
+        format.html { render :new, status: :unprocessable_entity }
+        format.json { render json: @addperson.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
   # CREATE /stores/orderdrink
   # this will create a drink for this  person - person entry already exists
   def orderdrink

@@ -1,6 +1,7 @@
 <turbo-frame id="turbo_front_person">
+  <% logger.debug ("person1:" + person.inspect) %>
   <% if person.last_order %>
-    <tr id="<%= dom_id person %>"
+    <div id="<%= dom_id person %>" class="flex"
         data-filter-target="person"
         data_person_id =<%= person.id %>
         data_name="<%= person.name %>"
@@ -10,24 +11,28 @@
         data_order_when="<%= time_ago_in_words(person.last_order.created_at) %>"
     >
   <% else %>
-    <tr id="<%= dom_id person %>" 
+    <div id="<%= dom_id person %>" class="flex"
         data-filter-target="person"
         data_person_id =<%= person.id %>
         data_name="<%= person.name %>"
     >
   <% end %>
 
-    <td data-action="click->filter#selectPerson">
-      <%= person.name %>
-    </td>
+      <div data-action="click->filter#selectPerson" 
+          class="w-full sm:w-2/5 border border-white sm:px-1 sm:mx-1 truncate">
+        <%= person.name %>
+      </div>
 
     <% if person.last_order %>
-      <td><%= person.last_order.drink %></td>
-      <td><%= person.last_order.status %></td>
-      <td><%= time_tag person.last_order.created_at, 
-              "data-local":"time-ago" %></td>
+      <div class="invisible sm:visible w-0 sm:w-1/5 border border-white sm:px-1 sm:mx-1 truncate"><%= person.last_order.drink  %></div>
+      <div class="invisible sm:visible w-0 sm:w-1/5 border border-white sm:px-1 sm:mx-1 truncate"><%= person.last_order.status %></div>
+      <div class="invisible sm:visible w-0 sm:w-1/5 border border-white sm:px-1 sm:mx-1 truncate"><%= time_tag person.last_order.created_at,
+              "data-local":"time-ago" %></div>
     <% else %>
-      <td></td><td></td><td></td>
+      <div class="invisible sm:visible w-0 sm:w-1/5 border border-white sm:px-1 sm:mx-1"></div>
+      <div class="invisible sm:visible w-0 sm:w-1/5 border border-white sm:px-1 sm:mx-1"></div>
+      <div class="invisible sm:visible w-0 sm:w-1/5 border border-white sm:px-1 sm:mx-1"></div>
     <% end %>
-  </tr>
+    
+    </div>
 </turbo-frame>

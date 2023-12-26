@@ -8,6 +8,9 @@
     <p>
       <%= link_to "Show this person", person %>
     </p>
+    <p>
+      <%= button_to "Delete", person, method: :delete, form: { data: { 'turbo-confirm': 'Are you sure?' } } %>
+    </p>
   <% end %>
 </div>
 

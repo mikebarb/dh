@@ -49,6 +49,7 @@ class PeopleController < ApplicationController
 
   # DELETE /people/1 or /people/1.json
   def destroy
+    
     @person.destroy
 
     respond_to do |format|
