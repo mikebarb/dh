@@ -7,7 +7,7 @@
     <%= form_with url: "updatestatus", method: :post do |form| %> 
         <div id="<%= dom_id order %>" data-brewster-target="order" data-status=<%= order.status %> data-drink=<%= order.drink %> class="flex items-center">
             <%= form.text_area :id, size: "10x1", class: "hidden", :data => { :filter_target => 'orderId' }, value: order.id %>
-            <div class="w-1/12 break-normal block font-medium mb-1">
+            <div class="hidden w-1/12 break-normal block font-medium mb-1">
             <%= order.id %>
             </div>
             

@@ -21,7 +21,7 @@
       <section class="m-2 w-full">
         <div class="flex" data-brewster-target="statusSection" data-showStatus="new ready done">
           <h1 class="font-bold text-4xl">Orders</h1>
-          <button data-action="click->brewster#getOrders"  class="mx-2 bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Get Orders</button>
+          <button data-action="click->brewster#getOrders"  class="hidden mx-2 bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Get Orders</button>
           <button data-action="click->brewster#showStatus" data-status="new"   data-brewster-target="showStatus" class="mx-2 bg-blue-500  hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">New</button>
           <button data-action="click->brewster#showStatus" data-status="ready" data-brewster-target="showStatus" class="mx-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Ready</button>
           <button data-action="click->brewster#showStatus" data-status="done"  data-brewster-target="showStatus" class="mx-2 bg-slate-500 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded">Done</button>
@@ -36,4 +36,13 @@
     </div> 
   </div>
 </div>
+<footer class="bg-pink-500 grid place-content-center" id="page_footer">
+  <nav class="bg-purple-500">
+    <ul class="flex">
+      <li class="px-4 bg-blue-300 hover:bg-blue-800"><%= link_to "Home", "front" %></li>
+      <li class="px-4 bg-blue-300 hover:bg-blue-800"><%= link_to "Front", "front" %></li>
+      <li class="px-4 bg-blue-300 hover:bg-blue-800"><%= link_to "Brewster", "brewster" %></li>
+    </ul>
+  </nav>
+</footer>
   

@@ -6,6 +6,9 @@ export default class extends Controller {
   connect() {
     console.log("brewster_controller connected", this.element)
   }
+  orderTargetConnected(element) {
+    this.getOrders();
+  }
 
   //--------------------------------------------------------------
   // Called when a status button at top of orders is clicked! 
@@ -13,25 +16,33 @@ export default class extends Controller {
   // b) turn the highlighting on or off for this button.
   showStatus(){
     console.log("showStatus called");
+    const statusColour = {"new":"blue", "ready":"green", "done":"slate"};
+    const statusValues = ["new", "ready", "done"]; 
     const selectedStatusButton = event.currentTarget; 
-    //const statusButtons  =  this.showStatusTargets;
     var selectedStatus = selectedStatusButton.getAttribute("data-status");
     const parentButtons = selectedStatusButton.parentNode;
     var currentShowStatus = parentButtons.getAttribute("data-showStatus"); 
-    // chekc if selectedStatus contained in currentShowStatus
-    if(currentShowStatus.includes(selectedStatus) ){                          // already selected
-      selectedStatusButton.classList.remove("bg-blue-500");                   // then deselect - remove highlight
-      selectedStatusButton.classList.add("bg-blue-200");
-      var currentShowStatus = currentShowStatus.replace(selectedStatus,'');   // update show string
-    }else{                                                                     // new selection
-      selectedStatusButton.classList.remove("bg-blue-200");                    // then select - add highlight
-      selectedStatusButton.classList.add("bg-blue-500");                   
-      var currentShowStatus = currentShowStatus + " " + selectedStatus;   // update show string
+    // check if selectedStatus contained in currentShowStatus    
+    if(currentShowStatus.includes(selectedStatus) ){                           // already selected
+      var currentShowStatus = currentShowStatus.replace(selectedStatus,'');    // update show string - remove this status
+      [...statusValues].forEach(thisStatus=>{
+        if(selectedStatus == thisStatus){
+          selectedStatusButton.classList.remove("bg-" + statusColour[thisStatus] +"-500");                    // then deselect - remove highlight
+          selectedStatusButton.classList.add("bg-" + statusColour[thisStatus] +"-200");
+        }
+      });
+    }else{
+      var currentShowStatus = currentShowStatus + " " + selectedStatus;        // update show string - add this status
+      [...statusValues].forEach(thisStatus=>{
+        if(selectedStatus == thisStatus){
+          selectedStatusButton.classList.remove("bg-" + statusColour[thisStatus] +"-200");   // then deselect - remove highlight
+          selectedStatusButton.classList.add("bg-" + statusColour[thisStatus] +"-500");
+        }
+      });
     }
-    currentShowStatus = currentShowStatus.replace(/\s+/g, ' ');
-    currentShowStatus = currentShowStatus.trim();
+    currentShowStatus = currentShowStatus.replace(/\s+/g, ' ');                // minimise white spaces
+    currentShowStatus = currentShowStatus.trim();                              // and drop leading and trailing white spaces
     parentButtons.setAttribute("data-showStatus", currentShowStatus);          // Now, put this back into the buttons parent 
-    
     // Now update the list of orders
     this.hideSelectedDrink()  
   }
@@ -74,9 +85,6 @@ export default class extends Controller {
 
   //--------------------------------------------------------------
   // Called to show and hide orders  
-  // a) called with parameters
-  // 1. hideDrink   = the drink to be hidden, shows everything else
-  // 2. flagAlready = this drink is currently set, simple need to reset!
   hideSelectedDrink() {
     console.log("hideSelectedDrink called.")
     const showStatus = this.statusSectionTarget.getAttribute("data-showStatus"); 
@@ -127,19 +135,21 @@ export default class extends Controller {
       }
     });
     // this section is console logging for troubleshooting.
-    console.log("drinks done :", "\t", countDone);
-    console.log("drinks ready:", "\t", countReady);
-    console.log("drinks new  :", "\t", countNew);
-    console.log("Now list of new drinks by type.");
+    if(false){
+      console.log("drinks done :", "\t", countDone);
+      console.log("drinks ready:", "\t", countReady);
+      console.log("drinks new  :", "\t", countNew);
+      console.log("Now list of new drinks by type.");
 
-    [...Object.keys(newDrinks).sort()].forEach(itemkey=>{
-      console.log(itemkey, "\t", newDrinks[itemkey]);
-    });
-    console.log("Now list of made drinks that are not in new drinks.");
-    [...Object.keys(madeDrinks).sort()].forEach(itemkey=>{
-      console.log(itemkey);
-    });
-
+      [...Object.keys(newDrinks).sort()].forEach(itemkey=>{
+        console.log(itemkey, "\t", newDrinks[itemkey]);
+      });
+      console.log("Now list of made drinks that are not in new drinks.");
+      [...Object.keys(madeDrinks).sort()].forEach(itemkey=>{
+        console.log(itemkey);
+      });
+    }
+    // make the dom for drinks
     this.makeDrinkEnteries(newDrinks, madeDrinks);
   }
 
@@ -156,15 +166,15 @@ export default class extends Controller {
     //});
     const parentEle = this.drinkSectionTarget;
     const drinkDisplay = parentEle.getAttribute("data-show");
-    console.log("drinkDisplay: ", drinkDisplay); 
+    //console.log("drinkDisplay: ", drinkDisplay); 
     var headerEle = parentEle.children[0].cloneNode(true);
     const templateEle = this.drinkTemplateTarget;
     parentEle.replaceChildren();
     parentEle.appendChild(headerEle);    
-    console.log("------------------------------");
+    //console.log("------------------------------");
 
     [...Object.keys(makeDrinks).sort()].forEach(myDrink=>{
-      console.log(myDrink, "\t", makeDrinks[myDrink]);
+      //console.log(myDrink, "\t", makeDrinks[myDrink]);
       var drinkEle = templateEle.cloneNode(true); 
       drinkEle.classList.remove("hidden");
       drinkEle.setAttribute("data-brewster-target", "drink")  
@@ -172,17 +182,17 @@ export default class extends Controller {
       if(myDrink == drinkDisplay){
         drinkEle.classList.add("bg-blue-800");
       }
-      console.log(drinkEle);
+      //console.log(drinkEle);
       var drinkEleChildren = drinkEle.children;
-      console.log(drinkEleChildren);
+      //console.log(drinkEleChildren);
       drinkEleChildren[0].innerText = myDrink;
       drinkEleChildren[1].innerText = makeDrinks[myDrink];
-      console.log(drinkEle);
+      //console.log(drinkEle);
       parentEle.appendChild(drinkEle);
     });
     
     [...Object.keys(readyDrinks).sort()].forEach(myDrink=>{
-      console.log(myDrink, "\t", readyDrinks[myDrink]);
+      //console.log(myDrink, "\t", readyDrinks[myDrink]);
       var drinkEle = templateEle.cloneNode(true); 
       drinkEle.classList.remove("hidden");
       drinkEle.setAttribute("data-brewster-target", "drink")  
@@ -190,12 +200,12 @@ export default class extends Controller {
       if(myDrink == drinkDisplay){
         drinkEle.classList.add("bg-blue-800");
       }
-      console.log(drinkEle);
+      //console.log(drinkEle);
       var drinkEleChildren = drinkEle.children;
-      console.log(drinkEleChildren);
+      //console.log(drinkEleChildren);
       drinkEleChildren[0].innerText = myDrink;
       //drinkEleChildren[1].innerText = manyDrinks[myDrink];
-      console.log(drinkEle);
+      //console.log(drinkEle);
       parentEle.appendChild(drinkEle);
     });
 
