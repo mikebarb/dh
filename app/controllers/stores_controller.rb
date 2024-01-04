@@ -8,6 +8,7 @@ class StoresController < ApplicationController
     # This solution only generates two database queries, with the pseudo last drink table eager loaded.
     #----------------------------------------------------------------------------------------------------------------------------
     @people = Person.includes(:last_order).all
+    @buttons = Button.order(:group, :seq, :name)
   end
 
   # POST /people or /people.json
@@ -37,22 +38,29 @@ class StoresController < ApplicationController
       #byebug
       #checkorderdrink_params
       @person = Person.includes(:last_order).find(params[:id])
+      #byebug
       #if @person.last_order.status != "new"
-      if @person.last_order.status == "new"
-        flash.now.alert = "Already ordered!"
-        render :orderdrink
+      if(!@person.last_order.nil?)
+        if @person.last_order.status == "new"
+          flash.now.alert = "Already ordered!"
+          render :orderdrink
         return
+        end
       end
+      #byebug
       #@person.orders.create! params.required(:order).permit(:drink, :status)
       #redirect_to @person
       @thisOrder = @person.orders.new drink: params[:drink]
+      #byebug
       respond_to do |format|
         if @thisOrder.save
+          #byebug
           format.html { 
             flash.now.notice = "Order placed."
             render :orderdrink 
           }
         else
+          byebug
           format.html { 
             flash.now.alert = "failed to submit"
             render :orderdrink  
@@ -99,6 +107,52 @@ class StoresController < ApplicationController
   def ready
     @person = Person.new
   end
+
+  # GET /stores/brewster
+  def brewster
+    @orders = Order
+              .includes(:person)
+              .order(:id)
+#              .where('updated_at > ?', 24.hours.ago)
+
+    #@orderscount = Order.group(:drink).count
+              #.where("status == ?", "new")
+              #.includes(:drink)
+
+    @statusList = ["new", "ready", "done"]
+
+
+  end
+  
+  # POST /stores/updateStatus
+  def updatestatus
+    @thisOrder = Order.includes(:person).find(params[:id])
+    if params[:commit] == "setNew"
+      logger.debug("commit is setNew")
+      @thisOrder.status = "new"
+    end
+    if params[:commit] == "setReady"
+      @thisOrder.status = "ready"
+    end
+    if params[:commit] == "setDone"
+      @thisOrder.status = "done"
+    end   
+    respond_to do |format|
+      if @thisOrder.save
+        format.html { 
+          #flash.now.notice = "Order status updated." 
+          render :partial => 'stores/order', :object => @thisOrder
+        }
+      else
+        format.html { 
+          flash.now.alert = "failed to update status"
+          render :partial => 'stores/order', :object => @thisOrder
+        }
+      end
+    end
+
+  end
+
 
   private
   # Use callbacks to share common setup or constraints between actions.

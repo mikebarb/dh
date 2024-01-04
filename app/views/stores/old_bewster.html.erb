@@ -1,0 +1,71 @@
+<div class="button floating-button floating-button-left-two">
+    <%= link_to 'Admin', shop_admin_path %><i class="fas fa-angle-right ml-2"></i>
+  </div>
+  <div class="button floating-button floating-button-left">
+    <%= link_to 'Counter', shop_counter_path %><i class="fas fa-angle-right ml-2"></i><br>
+  </div>
+  
+  
+  <div class="orders-container">
+    <div class="orders-left">
+      <h2 class="orange">New Orders</h2>
+      <div id="sumorders">Test</div>
+    </div>
+    <div class="orders-right">
+      <div id="statusSelect">
+        <b class="mr-3">Show</b><b>-</b>
+        <input id=new type="checkbox" checked onclick="selectStatusBoth();" >
+        <label for="new" class="new"><fa-icon class="fas fa-surprise mr-1"></fa-icon>new</label>
+    
+        <input id=ready type="checkbox" checked onclick="selectStatusBoth();" >
+        <label for="ready" class="ready"><fa-icon class="fas fa-stopwatch mr-1"></fa-icon>ready</label>
+    
+        <input id=done type="checkbox" checked onclick="selectStatusBoth();" >
+        <label for="done" class="done"><fa-icon class="fas fa-check mr-1"></fa-icon>done</label>
+      </div>
+      
+      <div id="orders">
+        <% @orders.each do |order| %>
+          <% #byebug %>
+          <div class="list-item <%= order.status %>" id=<%= order.id %>>
+              <div class="list-item-content">
+                  <span style="display: none;"><%= order.id %></span>
+                  <div class="w-50 d-flex">
+                    <span class="d-flex align-items-center">
+                      <i class="fas fa-hiking"></i>
+                      <span class="ml-2"><%= order.person.name %></span>
+                    </span>
+                    <span class="ml-3 d-flex align-items-center">
+                      <i class="fas fa-coffee"></i>
+                      <span class="ml-2"><%= order.drink %></span>
+                    </span>
+                  </div>
+                  <span style="display: none;"><%= order.quantity %></span>
+                  <% #byebug %>
+    
+                  <div class="ml-auto selection-container">
+                      <div id="<%= order.id %>_new" class="new-radio-button counterbuttonnew" onclick="orderUpdate(this);">
+                          <i class="fas fa-surprise"></i>
+                          <span>New</span>
+                      </div>
+                      <div id="<%= order.id %>_ready" class="ready-radio-button counterbuttonready" onclick="orderUpdate(this);">
+                          <i class="fas fa-stopwatch"></i>
+                          <span>Ready</span>
+                      </div>
+                      <div id="<%= order.id %>_done" class="done-radio-button counterbuttondone" onclick="orderUpdate(this);">
+                          <i class="fas fa-check"></i>
+                          <span>Done</span>
+                      </div>
+                  </div>
+                  
+              </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  
+  <script type="text/javascript">
+      selectStatusBoth();
+  </script>
+  

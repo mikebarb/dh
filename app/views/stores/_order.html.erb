@@ -1,0 +1,50 @@
+<turbo-frame id="turbo_request_order" class="even:bg-green-50 odd:bg-green-250">
+    <% if flash.notice %>
+        <div id="flashNotice" data-filter-target='requestNotice' style="color: green"><%= flash.notice %></div>
+    <% else %>
+        <div id="flashNotice" data-filter-target='requestNotice' style="color: red"><%= flash.alert %></div>
+    <% end %>
+    <%= form_with url: "updatestatus", method: :post do |form| %> 
+        <div id="<%= dom_id order %>" data-brewster-target="order" data-status=<%= order.status %> data-drink=<%= order.drink %> class="flex items-center">
+            <%= form.text_area :id, size: "10x1", class: "hidden", :data => { :filter_target => 'orderId' }, value: order.id %>
+            <div class="w-1/12 break-normal block font-medium mb-1">
+            <%= order.id %>
+            </div>
+            
+            <div class="w-4/12 break-normal block font-medium mb-1">
+            <%= order.person.name %>
+            </div>
+
+            <%= form.text_area :orderDrink, size: "40x1", class: "hidden", :data => { :filter_target => 'orderDrink' }, value: order.drink %>                
+            <div class="w-4/12 break-normal block font-medium mb-1">
+            <%= order.drink %>
+            </div>
+
+            <div class="w-1/12 break-normal block font-medium mb-1">
+                <%= order.status %>
+            </div>  
+
+            <div class="flex w-full">
+                <% if order.status == "new" %>
+                    <%= form.submit "setNew",    disabled: true, value: "new", class:"w-2/6 mx-1 bg-blue-800 border-white border-4 rounded-full text-white font-bold py-1 px-4", :data => { :filter_target => 'setNew'} %>
+                <% else %>
+                    <%= form.submit "setNew",    class:"w-2/6 mx-1 bg-blue-200 border-white border-4 rounded-full hover:bg-blue-700 text-white font-bold py-1 px-4", :data => { :filter_target => 'setNew'} %>  
+                <% end %>
+
+                <% if order.status == "ready" %>
+                    <%= form.submit "setReady",    disabled: true, value: "ready", class:"w-2/6 mx-1 bg-green-800 border-white border-4 rounded-full text-white font-bold py-1 px-4", :data => { :filter_target => 'setReady'} %>
+                <% else %>
+                    <%= form.submit "setReady",    class:"w-2/6 mx-1 bg-green-200 border-white border-4 rounded-full hover:bg-green-700 text-white font-bold py-1 px-4", :data => { :filter_target => 'setReady'} %>  
+                <% end %>
+
+                <% if order.status == "done" %>
+                    <%= form.submit "setDone",    disabled: true, value: "done", class:"w-2/6 mx-1 bg-slate-800 border-white border-4 rounded-full text-white font-bold py-1 px-4", :data => { :filter_target => 'setDone'} %>
+                <% else %>
+                    <%= form.submit "setDone",    class:"w-2/6 mx-1 bg-slate-200 border-white border-4 rounded-full hover:bg-slate-700 text-white font-bold py-1 px-4", :data => { :filter_target => 'setDone'} %>  
+                <% end %>
+            </div>
+        </div>
+    <% end %>
+</turbo-frame>
+    
+    

@@ -3,10 +3,19 @@
 </header>
 <p class="bg-orange-500"><%= notice %></p>
 <div data-controller="filter">
-  <section class="bg-red-500" id="filter_section">
-      <input data-filter-target="filterText" data-action="keyup->filter#changeFilterText" type="text">
-      <button data-action="click->filter#requestFilter" class="bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Filter</button>
-      <button data-action="click->filter#doSort" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Sort</button>
+  <section class="bg-red-500 flex flex-wrap" id="filter_section">
+    <div data-brewstr-target="test">
+      This is a test div!
+    </div>
+    <div class="self-center">
+      <div class="flex">
+        <i class="fas fa-hiking fa-lg m-2 self-center"></i>
+        <input data-filter-target="filterText" class="m-2 bg-green-100" data-action="keyup->filter#changeFilterText" type="text">
+      </div>
+      <button data-action="click->filter#requestFilter" class="hidden bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Filter</button>
+      <button data-action="click->filter#doSort" class="hidden bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Sort</button>
+    </div>
+    <div class="self-center">
       <turbo-frame id="turbo_request_order">
         <% #byebug %>
         <% if flash.notice %>
@@ -17,9 +26,10 @@
         <%= form_with url: "addperson", method: :post do |form| %>
           <%= form.hidden_field :id, value:"testid1", :data => { :filter_target => 'requestPersonId1' } %>
           <%= form.text_area :name, size: "40x1", class:"hidden", :data => { :filter_target => 'addPersonName' } %>
-          <%= form.submit "addperson", class:"bg-green-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded", :data => { :filter_target => 'addPersonButton'} %>
+          <%= form.submit "addperson", class:"m-2 bg-green-500 border-white border-4 rounded-full hover:bg-green-700 text-white font-bold py-2 px-4", :data => { :filter_target => 'addPersonButton'} %>
         <% end %>
-    </turbo-frame>
+      </turbo-frame>      
+    </div>
   </section>
 
   <section class="bg-blue-500 flex flex-col" id="people_section">
@@ -31,9 +41,63 @@
     </div>
   </section>
 
-<section class="bg-yellow-500" id="request_section">
-  <%= render "frontrequestdrink" %>
-</section>
+  <section class="bg-blue-500 flex flex-col" id="buttons_section">    
+    <div id="drinkarea" class="flex flex-row">
+      <div id="grpDrinks" class="flex flex-col w-5/12 mx-4">
+          <h2>Drink</h2>
+<% 
+          @buttons.each do |b|
+              if b.group == "Drink" then
+                  enablearray ="b" + b.enable.split(/ /).join(", b")
+                  #byebug
+%>                 <button data-filter-target="button" data-category="<%= b.group %>" data-action="click->filter#selectDrinkButton" class="xm-8 border border-width-1 bg-yellow-500 hover:bg-yellow-700 selected:bg-green-500 text-white font-bold py-2 px-4 rounded rounded-full" data-enable="<%= enablearray %>"><%= b.name %></button>
+<%              end
+         end
+%><!--
+       --><button id="other" data-filter-target="button" data-category="Drink" class="xm-8 border border-width-1 bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded rounded-full" data-enable="otherInput">Other</button>
+      </div><!--
+   --><div id="grpoptionsgroups" class="flex flex-col w-5/12 mx-4">
+<% 
+          currentGroup = ""
+          @buttons.each do |b|
+              if b.group != "Drink" then
+                  if b.group != currentGroup then
+                      if currentGroup != "" then
+%>
+                          </div>
+<%
+                      end
+                      currentGroup = b.group
+%><!--
+                      --><div id="grpoptions" class="hidden flex flex-col">
+                          <h2><%= b.group %></h2>
+<%
+                  end
+%>
+                  <button id="<%= "b" + b.id.to_s %>" data-filter-target="button" data-category="<%= b.group %>" data-action="click->filter#selectOptionButton" class="xm-8 border border-width-1 bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded rounded-full"><%= b.name %></button>
+<%
+              end
+%>
+<%
+         end
+         if currentGroup != "" then
+%>
+           </div><!--
+           
+--><%
+         end
+%><!--
+         --><div id="grpoptions" class="hidden flex flex-col">
+             <h2>Other</h2>
+             <input id="otherInput" data-filter-target="button" data-category="Other" action=class="" type="text" placeholder="Type in your drink description" title="Drink Description">
+         </div>
+      </div>
+    </div>   
+  </section>
+
+  <section class="bg-yellow-500" id="request_section">
+    <%= render "frontrequestdrink" %>
+  </section>
 
 </div>
 <footer class="bg-pink-500 grid place-content-center" id="page_footer">
