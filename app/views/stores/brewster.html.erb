@@ -4,21 +4,21 @@
   <% end %>
   <div data-controller="brewster">
     <div class="flex ">
-      <section class="hidden">
+      <section class="hidden w-1/6">
         <div data-action="click->brewster#findSelectedDrink" data-brewster-target="drinkTemplate" data-drink="drinkPlaceHolder" class="flex hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
           <div class="mx-1 w-5/6"></div>
           <div class="mx-1 w-1/6"></div>
         </div>
       </section>
-      <section class="bg-blue-500" data-brewster-target="drinkSection" data-show="">
+      <section class="bg-blue-500 w-1/6" data-brewster-target="drinkSection" data-show="">
         <h1 class="font-bold text-4xl">Drinks</h1>
         <div data-action="click->brewster#findSelectedDrink" data-brewster-target="drink" data-drink="Spacer" class="flex hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-          <div class="mx-1 w-11/12"></div>
-          <div class="mx-1 w-1/12"></div>
+          <div class="mx-1 w-5/6"></div>
+          <div class="mx-1 w-1/6"></div>
         </div>
       </section>
       
-      <section class="m-2 w-full">
+      <section class="m-2 w-full w-1/6">
         <div class="flex" data-brewster-target="statusSection" data-showStatus="new ready done">
           <h1 class="font-bold text-4xl">Orders</h1>
           <button data-action="click->brewster#getOrders"  class="hidden mx-2 bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Get Orders</button>
@@ -26,7 +26,8 @@
           <button data-action="click->brewster#showStatus" data-status="ready" data-brewster-target="showStatus" class="mx-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Ready</button>
           <button data-action="click->brewster#showStatus" data-status="done"  data-brewster-target="showStatus" class="mx-2 bg-slate-500 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded">Done</button>
         </div>
-        
+
+        <%= turbo_stream_from 'orders' %>
         <div id="orders" class="flex flex-col w-full">
           <% @orders.each do |order| %>
             <%= render "order", order: order %>

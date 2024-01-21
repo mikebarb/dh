@@ -12,5 +12,5 @@ Rails.application.routes.draw do
   post 'stores/updatestatus', as: :stores_updatestatus
 
   # Defines the root path route ("/")
-  # root "articles#index"
+  root 'stores#front'
 end

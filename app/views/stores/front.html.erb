@@ -1,108 +1,102 @@
-<header id="page_header">
-  <h1 class="bg-emerald-500 border-4 max-w-2xl mx-auto text-center">Store Front</h1>
-</header>
-<p class="bg-orange-500"><%= notice %></p>
 <div data-controller="filter">
-  <section class="bg-red-500 flex flex-wrap" id="filter_section">
-    <div class="self-center">
-      <div class="flex">
-        <i class="fas fa-hiking fa-lg m-2 self-center"></i>
-        <input data-filter-target="filterText" class="m-2 bg-green-100" data-action="keyup->filter#changeFilterText" type="text">
+  <div>
+    <p class="bg-orange-500"><%= notice %></p>
+    <div id="page_header" class="max-sm:hidden relative bg-white w-full flex flex-nowrap">
+      <div class="m-4 bg-white text-black text-lg font-extrabold  text-center flex place-content-stretch">Store Front</div>
+      <nav class="bg-white">
+        <ul class="absolute right-0 flex place-content-center">
+          <li class="p-2 m-2 bg-blue-300 hover:border-2 rounded-full border-blue-800"><%= link_to "Home", "front" %></li>
+          <li class="p-2 m-2 bg-blue-300 hover:border-2 rounded-full border-blue-800"><%= link_to "Front", "front" %></li>
+          <li class="p-2 m-2 bg-blue-300 hover:border-2 rounded-full border-blue-800"><%= link_to "Brewster", "brewster" %></li>
+        </ul>
+      </nav>
+    </div>
+    <div id="outer_container" class="bg-zinc-100 flex flex-col flex-nowrap content-between h-screen">
+      <div id="first_container" class="w-full">
+        <section id="filter_section" class="sticky top-0 bg-indigo-900 flex" data-filter-target="filterSection" >
+          <div class="self-center">
+            <div class="flex">
+              <span class="fas fa-search fa-lg p-3 text-center bg-white self-center border-indigo-950 border-s-2 border-y-2"></span>
+              <input id="filterText" data-filter-target="filterText" class="w-5/6 bg-white text-base border-indigo-950 border-2 focus:border-black focus:border-4 focus:border-double" data-action="keyup->filter#changeFilterText" type="text" placeholder="filter/add names" autocomplete="off">
+            </div>
+            <button data-action="click->filter#doFilter" class="hidden bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Filter</button>
+            <button data-action="click->filter#doSort" class="hidden bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Sort</button>
+          </div>
+          <div id="add_person" class="self-center">
+            <%= render "frontaddperson" %> 
+          </div>
+        </section>
       </div>
-      <button data-action="click->filter#requestFilter" class="hidden bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Filter</button>
-      <button data-action="click->filter#doSort" class="hidden bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Sort</button>
-    </div>
-    <div class="self-center">
-      <turbo-frame id="turbo_request_order">
-        <% #byebug %>
-        <% if flash.notice %>
-            <div id="flashNotice" data-filter-target='requestNotice' style="color: green"><%= flash.notice %></div>
-        <% else %>
-            <div id="flashNotice" data-filter-target='requestNotice' style="color: red"><%= flash.alert %></div>
-        <% end %>
-        <%= form_with url: "addperson", method: :post do |form| %>
-          <%= form.hidden_field :id, value:"testid1", :data => { :filter_target => 'requestPersonId1' } %>
-          <%= form.text_area :name, size: "40x1", class:"hidden", :data => { :filter_target => 'addPersonName' } %>
-          <%= form.submit "addperson", class:"m-2 bg-green-500 border-white border-4 rounded-full hover:bg-green-700 text-white font-bold py-2 px-4", :data => { :filter_target => 'addPersonButton'} %>
-        <% end %>
-      </turbo-frame>      
-    </div>
-  </section>
+      <div id="secondAndThird_container" class="w-full flex-nowrap overflow-y-scroll">
+        <div id="second_container" class="w-full">
+          <section id="people_section">
+            <%= turbo_stream_from 'people' %>
+            <div id="people" data-filter-target="people" data_person_selected="" 
+                  class="bg-white flex flex-col flex-nowrap">
+              <% @people.each do |person| %>
+                <% logger.debug ("person:" + person.inspect) %>
+                <%= render "frontperson", person: person %>
+              <% end %>
+            </div>
+          </section>
+        </div>
 
-  <section class="bg-blue-500 flex flex-col" id="people_section">
-    <div id="people">
-      <% @people.each do |person| %>
-        <% logger.debug ("person:" + person.inspect) %>
-        <%= render "frontperson", person: person %>
-      <% end %>
-    </div>
-  </section>
-
-  <section class="bg-blue-500 flex flex-col" id="buttons_section">    
-    <div id="drinkarea" class="flex flex-row">
-      <div id="grpDrinks" class="flex flex-col w-5/12 mx-4">
-          <h2>Drink</h2>
-<% 
-          @buttons.each do |b|
-              if b.group == "Drink" then
-                  enablearray ="b" + b.enable.split(/ /).join(", b")
-                  #byebug
-%>                 <button data-filter-target="button" data-category="<%= b.group %>" data-action="click->filter#selectDrinkButton" class="xm-8 border border-width-1 bg-yellow-500 hover:bg-yellow-700 selected:bg-green-500 text-white font-bold py-2 px-4 rounded rounded-full" data-enable="<%= enablearray %>"><%= b.name %></button>
-<%              end
-         end
-%><!--
-       --><button id="other" data-filter-target="button" data-category="Drink" class="xm-8 border border-width-1 bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded rounded-full" data-enable="otherInput">Other</button>
-      </div><!--
-   --><div id="grpoptionsgroups" class="flex flex-col w-5/12 mx-4">
-<% 
-          currentGroup = ""
-          @buttons.each do |b|
-              if b.group != "Drink" then
-                  if b.group != currentGroup then
-                      if currentGroup != "" then
-%>
-                          </div>
-<%
-                      end
-                      currentGroup = b.group
-%><!--
-                      --><div id="grpoptions" class="hidden flex flex-col">
-                          <h2><%= b.group %></h2>
-<%
-                  end
-%>
-                  <button id="<%= "b" + b.id.to_s %>" data-filter-target="button" data-category="<%= b.group %>" data-action="click->filter#selectOptionButton" class="xm-8 border border-width-1 bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded rounded-full"><%= b.name %></button>
-<%
+        <section id="third_container" class="hidden bg-zinc-100 mb-2 flex-grow flex flex-col flex-nowrap" id="buttons_section" data-filter-target="buttonSection">    
+          <div id="drinkarea" class="flex flex-row" >
+            <div id="grpDrinks" class="flex flex-col w-5/12 mx-4 mt-4" >
+                <h2 class="mb-2 font-serif text-2xl font-bold">Drink</h2>
+      <% 
+                @buttons.each do |b|
+                    if b.group == "Drink" then
+                        enablearray ="b" + b.enable.split(/ /).join(", b")
+                        #byebug
+      %>                 <button data-filter-target="button" data-category="<%= b.group %>" data-action="click->filter#selectDrinkButton" class="xm-8 py-2 px-8 mt-1 border border-width-1 border-orange-600 bg-white sm:hover:bg-yellow-700 text-orange-600 font-bold py-2 px-4 rounded rounded-md" data-enable="<%= enablearray %>"><%= b.name %></button>
+      <%             end
+                end
+      %><!--
+            --><button id="other" data-filter-target="button" data-category="Drink" data-action="click->filter#selectDrinkButton" class="xm-8 py-2 px-8 mt-1 border border-width-1 border-orange-600 bg-white sm:hover:bg-yellow-700 text-orange-600 font-bold py-2 px-4 rounded rounded-md" data-enable="otherInput">Other</button>
+            </div><!--
+        --><div id="grpoptionsgroups" class="flex flex-col w-5/12 mx-4 mt-16">
+      <% 
+                currentGroup = ""
+                @buttons.each do |b|
+                    if b.group != "Drink" then
+                        if b.group != currentGroup then
+                            if currentGroup != "" then
+      %>
+                                </div>
+      <%
+                            end
+                            currentGroup = b.group
+      %><!--
+                          --><div id="grpoptions" class="hidden flex flex-col">
+                                <h2><%= b.group %></h2>
+      <%
+                        end
+      %>
+                                <button id="<%= "b" + b.id.to_s %>" data-filter-target="button" data-category="<%= b.group %>" data-action="click->filter#selectOptionButton" class="xm-8 py-2 px-8 mt-1 border border-width-1 border-orange-600 bg-white sm:hover:bg-yellow-700 text-orange-600 font-bold py-2 px-4 rounded rounded-md"><%= b.name %></button>
+      <%
+                    end
+      %>
+      <%
               end
-%>
-<%
-         end
-         if currentGroup != "" then
-%>
-           </div><!--
-           
---><%
-         end
-%><!--
-         --><div id="grpoptions" class="hidden flex flex-col">
-             <h2>Other</h2>
-             <input id="otherInput" data-filter-target="button" data-category="Other" action=class="" type="text" placeholder="Type in your drink description" title="Drink Description">
-         </div>
-      </div>
-    </div>   
-  </section>
-
-  <section class="bg-yellow-500" id="request_section">
-    <%= render "frontrequestdrink" %>
-  </section>
-
+              if currentGroup != "" then
+      %>
+                </div><!--
+      --><%
+              end
+      %><!--
+            --><div id="grpoptions" class="hidden flex flex-col">
+                  <h2>Other</h2>
+                  <input id="otherInput" data-filter-target="button" data-category="Other" data-action="keyup->filter#addTextOther" class="hidden bg-slate-500" type="text" placeholder="Type in your drink description" title="Drink Description">
+                </div>
+            </div>
+          </div>   
+        </section>
+     </div>
+      <section id="fourth_container" class="hidden bg-indigo-900 w-full" id="request_section" data-filter-target="requestSection">
+        <%= render "frontrequestdrink" %>
+      </section>
+    </div>
+  </div>
 </div>
-<footer class="bg-pink-500 grid place-content-center" id="page_footer">
-  <nav class="bg-purple-500">
-    <ul class="flex">
-      <li class="px-4 bg-blue-300 hover:bg-blue-800"><%= link_to "Home", "front" %></li>
-      <li class="px-4 bg-blue-300 hover:bg-blue-800"><%= link_to "Front", "front" %></li>
-      <li class="px-4 bg-blue-300 hover:bg-blue-800"><%= link_to "Brewster", "brewster" %></li>
-    </ul>
-  </nav>
-</footer>

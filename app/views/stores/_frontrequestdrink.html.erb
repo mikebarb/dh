@@ -1,25 +1,26 @@
 <turbo-frame id="turbo_request_order">
     <% #byebug %>
-    <% if flash.notice %>
-        <div id="flashNotice" data-filter-target='requestNotice' style="color: green"><%= flash.notice %></div>
-    <% else %>
-        <div id="flashNotice" data-filter-target='requestNotice' style="color: red"><%= flash.alert %></div>
-    <% end %>
     <%= form_with url: "orderdrink", method: :post do |form| %>
     <div class="flex flex-col"> 
-        <div>Your order: </div>
-        <%= form.hidden_field :id, value:"testid", :data => { :filter_target => 'requestPersonId' } %>
+        <%= form.hidden_field :id, value:"", :data => { :filter_target => 'requestPersonId' } %>
         <div class="flex">
-            <i class="fas fa-hiking fa-lg m-2 w-8 self-center"></i>
-            <%= form.text_area :name,  size: "40x1", class: " bg-red-500 w-full", :data => { :filter_target => 'requestName'     } %>
+            <i class="fas fa-hiking fa-lg m-2 w-8 self-center text-white"></i>
+            <%= form.text_area :name, readonly: "true", size: "40x1", class: "bg-indigo-900 border-0 text-white w-full", :data => { :filter_target => 'requestName' }, autocomplete: "off" %>
         </div>
         <div class="flex">
-            <i class="fa fa-coffee fa-lg m-2 w-8 self-center"></i>
-            <%= form.text_area :drink, size: "40x1", class: "fas fa-coffee bg-blue-500 w-full", :data => { :filter_target => 'requestDrink'    } %>
+            <i class="fa fa-coffee fa-lg m-2 w-8 self-center text-white"></i>
+            <%= form.text_area :drink, readonly: "true", size: "40x1", class: "bg-indigo-900 border-0 text-white w-full", :data => { :filter_target => 'requestDrink' } %>
         </div>
-        <div class="flex flex-row w-full justify-between border border-black border-2">
-            <%= form.submit value: "order",  class: "bg-green-500 border border-white border-4 rounded-full hover:bg-green-800 w-5/12 text-white font-bold py-2 px-4" %>
-            <%= form.submit value: "remove", class: "bg-red-500   border border-white border-4 rounded-full hover:bg-red-800   w-5/12 text-white font-bold py-2 px-4" %>
+        <div class="flex flex-row w-full justify-between ">
+            <%= form.submit value: "Submit Order", :data => { :filter_target => 'submitOrder'},  class: "bg-orange-600 border border-white border-4 rounded-full hover:bg-green-800 w-5/12 text-white font-bold py-2 px-4" %>
+            <% if flash.notice %>
+              <div id="flashNotice" data-filter-target='requestNotice' class="text-white text-center" ><%= flash.notice %></div>
+            <% else %>
+              <div id="flashNotice" data-filter-target='requestNotice' class="text-white text-center"><%= flash.alert %></div>
+            <% end %>   
+            <%= form.submit value: "Cancel Order", :data => { :filter_target => 'submitCancel',
+                            :turbo_confirm => 'Are you sure? Press OK to remove your order or CANCEL to return to previous screen'},
+                            class: "bg-red-500   border border-white border-4 rounded-full hover:bg-red-800 w-5/12 text-white font-bold py-2 px-4" %>
         </div>
     </div>
     <% end %>

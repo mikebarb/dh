@@ -13,19 +13,28 @@ class StoresController < ApplicationController
 
   # POST /people or /people.json
   def addperson
+    logger.debug params.inspect
     @addperson = Person.new
     # @addperson = Person.new(addperson_params)
     @addperson.name = params["name"]
     respond_to do |format|
       if @addperson.save
-        #format.html { redirect_to shop_front_url, notice: "Person was successfully created." }
-        #@people = Person.includes(:last_order).all
-        #format.html {render :front}
-        format.html { render :_frontperson, locals: { person: @addperson }}
-        format.json { render :show, status: :created, location: @addperson }
+        format.html {
+          logger.debug "before rendering addperson."
+          flash.now.alert = "Person added (" + @addperson.id.to_s + ")."
+          render :addperson
+          logger.debug "after rendering addperson."
+          @person = Person.includes(:last_order).find(@addperson.id)
+          thisPersonTarget = "turbo_front_person_" + @person.id.to_s
+          logger.debug "before broadcast addperson."
+          @person.broadcast_append_later_to 'people', partial: 'stores/frontperson'
+          logger.debug "after broadcast addperson."
+        }
       else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @addperson.errors, status: :unprocessable_entity }
+        format.html {
+          flash.now.alert = "failed to add person"
+          render :addperson 
+        }
       end
     end
   end
@@ -34,12 +43,13 @@ class StoresController < ApplicationController
   # this will create a drink for this  person - person entry already exists
   def orderdrink
     #byebug
-    if params[:commit] == "order"
-      #byebug
-      #checkorderdrink_params
+    logger.debug params.inspect
+    if params[:id] == ''
+      return
+    end
+    if params[:commit] == "Submit Order"
       @person = Person.includes(:last_order).find(params[:id])
-      #byebug
-      #if @person.last_order.status != "new"
+      thisPersonTarget = "turbo_front_person_" + params[:id]
       if(!@person.last_order.nil?)
         if @person.last_order.status == "new"
           flash.now.alert = "Already ordered!"
@@ -47,44 +57,46 @@ class StoresController < ApplicationController
         return
         end
       end
-      #byebug
-      #@person.orders.create! params.required(:order).permit(:drink, :status)
-      #redirect_to @person
       @thisOrder = @person.orders.new drink: params[:drink]
-      #byebug
+      @thisOrder.status = "new"
       respond_to do |format|
         if @thisOrder.save
-          #byebug
-          format.html { 
+          thisOrderTarget = "turbo_request_order_" + @thisOrder.id.to_s
+          format.html {
             flash.now.notice = "Order placed."
             render :orderdrink 
+            @thisOrder.broadcast_append_later_to 'orders', partial: 'stores/order'
+            # now get the person with the just updated last order
+            @person = Person.includes(:last_order).find(params[:id])
+            @person.broadcast_replace_later_to 'people', partial: 'stores/frontperson', target: thisPersonTarget
           }
         else
-          byebug
           format.html { 
             flash.now.alert = "failed to submit"
             render :orderdrink  
           }
         end
       end
-    elsif params[:commit] == "remove"
-      #byebug
+    elsif params[:commit] == "Cancel Order"
       @person = Person.includes(:last_order).find(params[:id])
-      #if @person.last_order.status != "new"
       if @person.last_order.status != "new"
         flash.now.alert = "Cannot remove - already made!"
         render :orderdrink
         return
       end
-      #@person.orders.create! params.required(:order).permit(:drink, :status)
-      #redirect_to @person
       @thisOrder = @person.last_order
       @thisOrder.status = "cancelled"
-      respond_to do |format|
+      thisOrderTarget = "turbo_request_order_" + @thisOrder.id.to_s
+      thisPersonTarget = "turbo_front_person_" + @thisOrder.person_id.to_s
+  respond_to do |format|
         if @thisOrder.save
-          format.html { 
+          format.html {
             flash.now.notice = "Order cancelled."
             render :orderdrink 
+            @thisOrder.broadcast_replace_later_to 'orders', partial: 'stores/order', target: thisOrderTarget
+            # now get the person with the just updated last order
+            @person = Person.includes(:last_order).find(params[:id])
+            @person.broadcast_replace_later_to 'people', partial: 'stores/frontperson', target: thisPersonTarget
           }
         else
           format.html { 
@@ -126,9 +138,11 @@ class StoresController < ApplicationController
   
   # POST /stores/updateStatus
   def updatestatus
+    logger.debug("updatestatus called.")
     @thisOrder = Order.includes(:person).find(params[:id])
+    thisOrderTarget = "turbo_request_order_" + @thisOrder.id.to_s
+    thisPersonTarget = "turbo_front_person_" + @thisOrder.person.id.to_s
     if params[:commit] == "setNew"
-      logger.debug("commit is setNew")
       @thisOrder.status = "new"
     end
     if params[:commit] == "setReady"
@@ -136,21 +150,53 @@ class StoresController < ApplicationController
     end
     if params[:commit] == "setDone"
       @thisOrder.status = "done"
-    end   
-    respond_to do |format|
-      if @thisOrder.save
-        format.html { 
-          #flash.now.notice = "Order status updated." 
-          render :partial => 'stores/order', :object => @thisOrder
-        }
-      else
-        format.html { 
-          flash.now.alert = "failed to update status"
-          render :partial => 'stores/order', :object => @thisOrder
-        }
+    end
+    if params[:commit] == "delete"
+      thisPersonId = @thisOrder.person.id
+      myOrderId = "turbo_request_order_" + @thisOrder.id.to_s
+      respond_to do |format|
+        if @thisOrder.delete
+          format.html {
+            flash.now.notice = "Order deleted." 
+            @thisOrder.broadcast_replace_later_to "orders", target: thisOrderTarget
+            # Update the front page with person/drink info.
+            @person = Person.includes(:last_order).find(thisPersonId)
+            @person.broadcast_replace_later_to 'people', partial: 'stores/frontperson', target: thisPersonTarget
+          }
+          format.turbo_stream{
+            @thisOrder.broadcast_remove_to 'orders', target: thisOrderTarget
+            @person = Person.includes(:last_order).find(thisPersonId)
+            @person.broadcast_replace_later_to 'people', partial: 'stores/frontperson', target: thisPersonTarget
+          }
+        else
+          format.html { 
+            flash.now.alert = "failed to delete this order"
+            render :partial => 'stores/order', :object => @thisOrder
+          }
+        end
+      end
+    else    # processing doNew, doReady or doDone 
+      logger.debug("commit is new or ready or done and action it.")
+      respond_to do |format|
+        if @thisOrder.save
+          format.html {
+            flash.now.notice = "Order status updated." 
+            #render :partial => 'stores/order', :object => @thisOrder
+            #@thisOrder.broadcast_replace_later_to 'orders', partial: 'stores/order'
+          }
+          format.turbo_stream{
+            @thisOrder.broadcast_replace_later_to 'orders', partial: 'stores/order', target: thisOrderTarget
+            @person = Person.includes(:last_order).find(@thisOrder.person.id)
+            @person.broadcast_replace_later_to 'people', partial: 'stores/frontperson', target: thisPersonTarget
+          }
+       else
+          format.html { 
+            flash.now.alert = "failed to update status"
+            render :partial => 'stores/order', :object => @thisOrder
+          }
+        end
       end
     end
-
   end
 
 

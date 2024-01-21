@@ -6,9 +6,8 @@
         <div id="flashNotice" data-filter-target='requestNotice' style="color: red"><%= flash.alert %></div>
     <% end %>
     <%= form_with url: "addperson", method: :post do |form| %>
-    To add person: <br>
-    <%= form.hidden_field :id, value:"testid1", :data => { :filter_target => 'requestPersonId1' } %>
-    <%= form.text_area :name, size: "40x1", :data => { :filter_target => 'addPersonName' } %>
-    <%= form.submit "addperson" %>
+      <%= form.hidden_field :id, value:"", :data => { :filter_target => 'requestPersonId1' } %>
+      <%= form.text_area :name, size: "40x1", class:"hidden", :data => { :filter_target => 'addPersonName' }, autocomplete:"off" %>
+      <%= form.submit "New Person", hidden: :true, class:"m-2 bg-orange-600  rounded-full hover:bg-orange-400 text-white py-2 px-4", :data => { :filter_target => 'addPersonButton'} %>
     <% end %>
-</turbo-frame>
+  </turbo-frame>

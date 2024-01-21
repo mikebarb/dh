@@ -6,6 +6,9 @@ export default class extends Controller {
   connect() {
     console.log("brewster_controller connected", this.element)
   }
+  // this invokes the getOrders() process when a new element 
+  // of target = order is loaded. Thus works with status updates.
+  // refer: https://labzero.com/blog/hotwire-decisions-when-to-use-turbo-frames-turbo-streams-and-stimulus
   orderTargetConnected(element) {
     this.getOrders();
   }
