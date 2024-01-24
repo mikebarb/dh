@@ -11,9 +11,9 @@
         </ul>
       </nav>
     </div>
-    <div id="outer_container" class="bg-zinc-100 flex flex-col flex-nowrap content-between h-screen">
-      <div id="first_container" class="w-full">
-        <section id="filter_section" class="sticky top-0 bg-indigo-900 flex" data-filter-target="filterSection" >
+    <div id="outer_container" class="bg-zinc-100 mb-32 flex flex-col flex-shrink flex-nowrap overflow-y-scroll h-fit">
+      <div id="first_container" class="w-full ">
+        <section id="filter_section" class="bg-indigo-900 flex" data-filter-target="filterSection" >
           <div class="self-center">
             <div class="flex">
               <span class="fas fa-search fa-lg p-3 text-center bg-white self-center border-indigo-950 border-s-2 border-y-2"></span>
@@ -23,11 +23,11 @@
             <button data-action="click->filter#doSort" class="hidden bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Sort</button>
           </div>
           <div id="add_person" class="self-center">
-            <%= render "frontaddperson" %> 
+            <%= render "frontaddperson" %>
           </div>
         </section>
       </div>
-      <div id="secondAndThird_container" class="w-full flex-nowrap overflow-y-scroll">
+      <div id="secondAndThird_container" class="w-full flex-nowrap flex-shrink">
         <div id="second_container" class="w-full">
           <section id="people_section">
             <%= turbo_stream_from 'people' %>
@@ -88,15 +88,17 @@
       %><!--
             --><div id="grpoptions" class="hidden flex flex-col">
                   <h2>Other</h2>
-                  <input id="otherInput" data-filter-target="button" data-category="Other" data-action="keyup->filter#addTextOther" class="hidden bg-slate-500" type="text" placeholder="Type in your drink description" title="Drink Description">
+                  <input id="otherInput" data-filter-target="button" data-category="Other" data-action="keyup->filter#addTextOther" class="hidden bg-slate-500" type="text" placeholder="Descripe drink" title="Drink Description">
                 </div>
             </div>
           </div>   
         </section>
      </div>
-      <section id="fourth_container" class="hidden bg-indigo-900 w-full" id="request_section" data-filter-target="requestSection">
-        <%= render "frontrequestdrink" %>
-      </section>
     </div>
+
+    <section id="fourth_container" class="hidden fixed bottom-0 bg-indigo-900 w-full" id="request_section" data-filter-target="requestSection">
+      <%= render "frontrequestdrink" %>
+    </section>
+
   </div>
 </div>
