@@ -5,7 +5,7 @@
        colourCancelled = "red-500"
   %>
   <% if order.status == "new" %>
-    <div class="bg-white my-2 mr-16 py-2 border-l-4 border-solid border-<%= colourNew %>" >
+    <div class="bg-white my-2 py-2 border-l-4 border-solid border-<%= colourNew %>" >
   <% elsif order.status == "ready" %>
     <div class="bg-white my-2 py-2 border-l-4 border-solid border-<%= colourReady %>" >
   <% elsif order.status == "done" %>
@@ -20,7 +20,6 @@
                 <div id="flashNotice" style="color: red"><%= flash.alert %></div>
             <% end %>
             <div id="<%= dom_id order %>" 
-                data-brewster-target="order"
                 data-ready-target="order" 
                 data-status="<%= order.status %>"
                 data-drink="<%= order.drink %>"
@@ -33,7 +32,7 @@
                 </div>
                 
                 <div class="flex items-center content-center w-3/12 break-normal block font-medium mb-1">
-                    <span class="fas fa-hiking my-2 mr-4"></span>
+                    <span class="fas fa-hiking m-2"></span>
                     <span><%= order.person.name %></span>
                 </div>
 

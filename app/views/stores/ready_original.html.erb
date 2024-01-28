@@ -1,0 +1,81 @@
+<div id="displayUrl">
+    <%= @myUrl %>
+  </div>
+  
+  <div id="statusSelect">
+    <% @statusList.each do |sl| %>
+      <input id=<%= sl %> type="checkbox" checked >
+    <% end %>
+  </div>
+  <% scrollText = "" %>
+    <table id="orderstablet">
+        <tbody id="orderstable">
+            <% @readyorders.each do |order| %>
+                <% className = "counterstatus" + order.status %>
+                <tr id=t<%= order.id %> class="<%= className %>">
+                    <td>
+                        <i class="new-icon fas fa-minus"></i>
+                        <i class="ready-icon fas fa-check"></i>
+                    </td>
+                    <td style="display: none;"><%= order.id %></td>
+                    <td><i class="fas fa-hiking mr-2 hideme"></i><%= order.person.name %></td>
+                    <td style="display: none;"><i class="fas fa-coffee mr-2 hideme"></i>(<%= order.drink %>)</td>
+                    <td style="display: none;"><%= order.quantity %></td>
+                    <td style="display: none;"><%= order.status %></td>
+                </tr>
+                <% if order.status == "ready" then
+                    if scrollText.length > 0 then 
+                        scrollText = scrollText + " - "
+                    end
+                    scrollText = scrollText + order.person.name
+                end
+            end %>
+        </tbody>
+    </table>
+  
+  <% scrollText = scrollText #+ "--1--" + scrollText + "--2--" + scrollText %> 
+  
+  <!--
+  <div>
+    <svg width="300" height="100" viewbox="0,0,300,100">
+      <rect y="0" width="300" height="100" style="fill:rgb(255,255,255);stroke-width:1;stroke:rgb(0,0,0)" />
+    </svg>
+  
+    <svg width="300" height="100" viewBox="0 0 300  100">
+      <rect y="0" width="300" height="100" style="fill:rgb(255,255,255);stroke-width:1;stroke:rgb(0,0,0)" />
+      <text x="" y="50">
+        This is my text.
+        <animate attributeName="x" from "0" to="100" dur="5s" repeatCount="indefinite">
+      </text>
+    </svg>
+  </div>
+  
+  <div>
+    <svg width="300" height="100" viewBox="0 0 300  100">
+      <ellipse cx="50" cy="50" rx="" ry="50">
+        <animate attributeName="rx" from "0" to="50" dur="10s" repeatCount="indefinite">
+      </ellipse>
+    </svg>
+  </div>
+  
+  <div>
+    <svg viewbox="0,0,300,100" id="scrollText">
+      <rect y="35" width="300" height="20" style="fill:rgb(255,255,255);stroke-width:3;stroke:rgb(0,0,0)" />
+      <text x="" y="50">
+        This is my text.
+        <animate attributeName="x" from "0" to="400" dur="10s" repeatCount="indefinite">
+      </text>
+    </svg>
+  </div>
+  -->
+  
+  <!--
+  <div id=scrollme>This is testing text</div>
+  -->
+  <!--
+  <div id=scrollme><%= scrollText %></div>
+  -->
+  <script type="text/javascript">
+      selectStatusTable();
+  </script>
+  

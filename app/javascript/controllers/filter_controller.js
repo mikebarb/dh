@@ -109,17 +109,21 @@ export default class extends Controller {
       //**var parentNodeId = parentNode.id;
       var parentNodeId = element.id;
       var parentNode = document.getElementById(parentNodeId);
+      //***************** */
       parentNode.classList.remove(this.person_bg);
       parentNode.classList.add(this.person_bg_selected);
       parentNode.getElementsByTagName("div")[this.checkIndex].classList.remove("hidden");
       parentNode.getElementsByTagName("div")[this.boxIndex].classList.add("hidden");
-
-      //element.classList.remove(this.person_bg);
-      //element.classList.add(this.person_bg_selected);
+      element.classList.remove(this.person_bg);
+      element.classList.add(this.person_bg_selected);
       // if status is new, and this is from the server, then need to
       // update the description to match the last drink.
       if(elementStatus == "new" || elementStatus == "cancelled" ){
         //this.requestDrinkTarget.value = element.getAttribute("data_order_drink");
+        //const personSelected   = this.peopleTarget.getAttribute("data_person_selected");
+        // Deselect the person.
+        ////this.deselectAllPeople();
+        ////this.peopleTarget.setAttribute("data_person_selected", "");
         this.populateRequestForm(element.firstElementChild);
         this.initialiseButtons();
       }
@@ -127,7 +131,6 @@ export default class extends Controller {
       this.showHideStuff(element.firstElementChild);
     }
   }
-
 
   selectPerson(){
     console.log("selectPerson called");
@@ -166,14 +169,14 @@ export default class extends Controller {
         console.log("selected", thisSelectedPersonId);
         //need to deselect everything!!!
         // and select this person
-        this.deselectAllPeople(allPeople);
+        this.deselectAllPeople();
         this.selectOnePerson(personNode, peopleInfo);
         this.populateRequestForm(personNode);
       }   
     }else{                                 // no current person selected
       console.log("nothing selected");
       // use all the existing processing.
-      this.deselectAllPeople(allPeople);
+      this.deselectAllPeople();
       // show what is selected by changing text colour
       this.selectOnePerson(personNode, peopleInfo);
       // copy attributes, held in target's parent,
@@ -191,16 +194,18 @@ export default class extends Controller {
   //-----------------------------------
   // pass in the People = list of all people nodes
   // simply deselect each one.
-  deselectAllPeople(allPeople){
+  deselectAllPeople(){
+    const allPeople  =  this.personTargets;
     // step through each person, resetting previous selection
     [...allPeople].forEach(node=>{
       node.classList.remove(this.person_bg_selected);
       node.classList.add(this.person_bg);
       node.classList.remove("hidden");
-      node.getElementsByTagName("div")[this.checkIndex].classList.remove("hidden");
-      node.getElementsByTagName("div")[this.boxIndex].classList.add("hidden");
+      node.getElementsByTagName("div")[this.checkIndex].classList.add("hidden");
+      node.getElementsByTagName("div")[this.boxIndex].classList.remove("hidden");
     });
   }
+
   hidePeopleButSelected(){
     console.log("hidePeopleButSelected called");
     //<div id="people" data-filter-target="people" data-person-selected="">

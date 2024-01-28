@@ -52,6 +52,7 @@ export default class extends Controller {
 
   //--------------------------------------------------------------
   // Called when a drink button is clicked! 
+  // i.e. buttons on the left margin!
   // a) sets or toggles the button
   // b) calls "hideSelectedDrink" to show and hide relevant orders.
 
@@ -65,18 +66,26 @@ export default class extends Controller {
     var currentSelectedDrink = parentEle.getAttribute("data-show");
     if(currentSelectedDrink === ""){                           // when nothing set
       parentEle.setAttribute("data-show", selectedDrink);      //simply set to this drink
-      selectedEle.classList.add("bg-blue-800");                // and show selected in caller button.
+      //selectedEle.classList.add("bg-blue-800");                // and show selected in caller button.
+      selectedEle.classList.remove("bg-white", "text-blue-800");
+      selectedEle.classList.add("bg-blue-800", "text-white");
     }else{
       if(selectedDrink === currentSelectedDrink){              // already selected
         parentEle.setAttribute("data-show", "");               //   then toggle off
-        selectedEle.classList.remove("bg-blue-800");           //   and so show selected in caller button.
-      }else{                                                    // selecting a different drink
+        //selectedEle.classList.remove("bg-blue-800");           //   and so show selected in caller button.
+        selectedEle.classList.add("bg-white", "text-blue-800");
+        selectedEle.classList.remove("bg-blue-800", "text-white");
+        }else{                                                    // selecting a different drink
         parentEle.setAttribute("data-show", selectedDrink);     //   set to new changed value
         const allDrinks = this.drinkTargets;
         [...allDrinks].forEach(node=>{                          // remove prevous settings
-          node.classList.remove("bg-blue-800");
+          //node.classList.remove("bg-blue-800");
+          node.classList.add("bg-white", "text-blue-800");
+          node.classList.remove("bg-blue-800", "text-white");
         });
-        selectedEle.classList.add("bg-blue-800");               // so show selected in caller button.
+        //selectedEle.classList.add("bg-blue-800");               // so show selected in caller button.
+        selectedEle.classList.remove("bg-white", "text-blue-800");
+        selectedEle.classList.add("bg-blue-800", "text-white");  
       }
     }    
     //var hideDrink = parentEle.getAttribute("data-show");
@@ -95,19 +104,20 @@ export default class extends Controller {
     const allOrders  =  this.orderTargets;
     [...allOrders].forEach(node=>{
       // show order if showDrink present (or blank) and showStatus are both present in the order
-      // else hide     
+      // else hide    
+      var eleShowHide = node.parentNode.parentNode.parentNode;
       if( ((node.getAttribute("data-drink") == showDrink ) || ("" == showDrink)) &&
-          showStatus.includes(node.getAttribute("data-status"))){
-        node.classList.remove("hidden");      // display this order
+          showStatus.includes(node.getAttribute("data-status")) || (node.getAttribute("data-status") == "cancelled")){
+        eleShowHide.classList.remove("hidden");      // display this order
       }else{
-        node.classList.add("hidden");         //hide this order
+        eleShowHide.classList.add("hidden");         //hide this order
       }
     });
   }
 
   //--------------------------------------------------------------
   // UPdate the status of an order 
-  // - by pressing statua button for that order
+  // - by pressing status button for that order
   // - this function needs to be called after the turboframe refresh
   getOrders() {
     console.log("=== getOrders called ===")
@@ -154,6 +164,7 @@ export default class extends Controller {
     }
     // make the dom for drinks
     this.makeDrinkEnteries(newDrinks, madeDrinks);
+    this.hideSelectedDrink();
   }
 
   //--------------------------------------------------------------
@@ -161,12 +172,16 @@ export default class extends Controller {
   // a) called with parameters
   // 1. hideDrink   = the drink to be hidden, shows everything else
   // 2. flagAlready = this drink is currently set, simple need to reset!
-  makeDrinkEnteries(makeDrinks, readyDrinks) {
+  makeDrinkEnteries(newDrinks, readyDrinks) {
     console.log("makeDrinkEnteries called");
     //console.log("Now list of made drinks that are not in new drinks.");
     //[...Object.keys(madeDrinks).sort()].forEach(itemkey=>{
     //  console.log(itemkey);
     //});
+    // Need to check if the currently selected drink is still
+    // present in the new and ready lists.
+    // If NOT, then reset the selected drink.
+    var flagDrinkSelectedPresent = false;
     const parentEle = this.drinkSectionTarget;
     const drinkDisplay = parentEle.getAttribute("data-show");
     //console.log("drinkDisplay: ", drinkDisplay); 
@@ -176,20 +191,27 @@ export default class extends Controller {
     parentEle.appendChild(headerEle);    
     //console.log("------------------------------");
 
-    [...Object.keys(makeDrinks).sort()].forEach(myDrink=>{
-      //console.log(myDrink, "\t", makeDrinks[myDrink]);
+    [...Object.keys(newDrinks).sort()].forEach(myDrink=>{
+      //console.log(myDrink, "\t", newDrinks[myDrink]);
       var drinkEle = templateEle.cloneNode(true); 
       drinkEle.classList.remove("hidden");
-      drinkEle.setAttribute("data-brewster-target", "drink")  
-      drinkEle.setAttribute("data-drink", myDrink)
+      drinkEle.setAttribute("data-brewster-target", "drink");  
+      drinkEle.setAttribute("data-drink", myDrink);
+      drinkEle.classList.add("border", "rounded-full", "border-white", "m-2");
       if(myDrink == drinkDisplay){
-        drinkEle.classList.add("bg-blue-800");
+        flagDrinkSelectedPresent = true;
+        //drinkEle.classList.add("bg-blue-800");
+        drinkEle.classList.remove("bg-white", "text-blue-800");
+        drinkEle.classList.add("bg-blue-800", "text-white");
+      }else{
+        drinkEle.classList.remove("bg-blue-800", "text-white");
+        drinkEle.classList.add("bg-white", "text-blue-800");
       }
       //console.log(drinkEle);
       var drinkEleChildren = drinkEle.children;
       //console.log(drinkEleChildren);
       drinkEleChildren[0].innerText = myDrink;
-      drinkEleChildren[1].innerText = makeDrinks[myDrink];
+      drinkEleChildren[1].innerText = newDrinks[myDrink];
       //console.log(drinkEle);
       parentEle.appendChild(drinkEle);
     });
@@ -200,8 +222,15 @@ export default class extends Controller {
       drinkEle.classList.remove("hidden");
       drinkEle.setAttribute("data-brewster-target", "drink")  
       drinkEle.setAttribute("data-drink", myDrink)
+      drinkEle.classList.add("border", "rounded-full", "border-white", "m-2");
       if(myDrink == drinkDisplay){
-        drinkEle.classList.add("bg-blue-800");
+        flagDrinkSelectedPresent = true;
+        //drinkEle.classList.add("bg-blue-800");
+        drinkEle.classList.remove("bg-white", "text-blue-800");
+        drinkEle.classList.add("bg-blue-800", "text-white");
+      }else{
+        drinkEle.classList.add("bg-white", "text-blue-800");
+        drinkEle.classList.remove("bg-blue-800", "text-white");
       }
       //console.log(drinkEle);
       var drinkEleChildren = drinkEle.children;
@@ -211,7 +240,8 @@ export default class extends Controller {
       //console.log(drinkEle);
       parentEle.appendChild(drinkEle);
     });
-
-
+    if(flagDrinkSelectedPresent == false){   // selected drink no longer present
+      parentEle.setAttribute("data-show", "");
+    }
   }
 }

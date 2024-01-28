@@ -1,5 +1,9 @@
 class StoresController < ApplicationController
 
+  # GET /shops/admin
+  def admin
+  end
+
   # GET /stores/front or /stores/front.json
   def front
     #----------------------------------------------------------------------------------------------------------------------------
@@ -7,7 +11,8 @@ class StoresController < ApplicationController
     # https://www.salsify.com/blog/engineering/most-recent-by-group-in-rails 
     # This solution only generates two database queries, with the pseudo last drink table eager loaded.
     #----------------------------------------------------------------------------------------------------------------------------
-    @people = Person.includes(:last_order).all
+    #@people = Person.includes(:last_order).all
+    @people = Person.includes(:last_order).order(:name).all
     @buttons = Button.order(:group, :seq, :name)
   end
 
@@ -125,7 +130,7 @@ class StoresController < ApplicationController
     @orders = Order
               .includes(:person)
               .order(:id)
-#              .where('updated_at > ?', 24.hours.ago)
+              .where('updated_at > ?', 24.hours.ago)
 
     #@orderscount = Order.group(:drink).count
               #.where("status == ?", "new")
@@ -199,6 +204,30 @@ class StoresController < ApplicationController
     end
   end
 
+  # GET /shops/ready
+  # GET /shops/ready.json
+  def ready
+    hostwithport = "#{request.host_with_port}"
+    logger.debug hostwithport
+    #   a10e513aab9647cfae2f94b7015f74e7.vfs.cloud9.us-east-1.amazonaws.com
+    #   drinks.mikebarb.net
+    if hostwithport == "drinks.mikebarb.net" 
+      hostwithport = "gcc.org.au/drinks"
+    end
+    @myUrl = "#{request.protocol}" + hostwithport
+    @orders = Order
+              .where("updated_at > ?", 24.hours.ago)
+              .includes(:person)
+              .order(:id)
+
+              #.where("updated_at > ? AND status = ?", 24.hours.ago, "ready")
+
+    logger.debug "@readyorders: " + @readyorders.inspect
+    
+    @statusList = ["ready"]
+    logger.debug "@statusList: " + @statusList.inspect
+    @readydisplay = true
+  end
 
   private
   # Use callbacks to share common setup or constraints between actions.
