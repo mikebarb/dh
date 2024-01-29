@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["requestNotice", "filterText", "person", "requestPersonId", "requestName",
+  static targets = ["requestNotice", "requestNoticePerson", "filterText", "person", "requestPersonId", "requestName",
                     "requestDrink", "addPersonName", "requestPersonId1", "addPersonButton",
                     "button", "submitOrder", "submitCancel", "people", "requestSection",
                     "buttonSection", "filterSection"]
@@ -52,7 +52,7 @@ export default class extends Controller {
   changeFilterText() {
     const textElement = this.filterTextTarget
     //console.log("text changed in filterTextField", textElement.value)
-    this.doFilter()
+    this.doFilter();
   }
 
  // called when there is a turboframe update on this page.
@@ -63,36 +63,43 @@ export default class extends Controller {
   onUpdate(element){
     console.log("onUpdate called");
     console.log("element: ", element);
-    const elementPersonId  = element.getAttribute("data_person_id");
-    const elementStatus    = element.getAttribute("data_order_status");
-    const personSelected   = this.peopleTarget.getAttribute("data_person_selected");
-    const lastListedPerson = this.peopleTarget.lastElementChild.lastElementChild;
-    console.log("lastListedPerson: ", lastListedPerson);
+    // key decision making info about this element
+    const elementPersonId    = element.getAttribute("data_person_id");                 // record id of person
+    const elementStatus      = element.getAttribute("data_order_status");              // status of last order
+    // key desision making info about currently selected person
+    const personSelected     = this.peopleTarget.getAttribute("data_person_selected");  // record id of selected person
+    //const lastListedPerson   = this.peopleTarget.lastElementChild.lastElementChild;    
+    var   noticePerson       = this.requestNoticePersonTarget.textContent;      // response to add person form submit
+    var   noticeOrder        = this.requestNoticeTarget.textContent;            // response to submit/cancel order form submit
+    console.log("noticePerson: ", noticePerson);         
+    console.log("noticeOrder: ", noticeOrder);
+    
+    //console.log("lastListedPerson: ", lastListedPerson);
     console.log("elementPersonId: ", elementPersonId);
     console.log("personSelected : ", personSelected);
     console.log("elementStatus : ", elementStatus);
     // Determine if the user requested this is a person added
     // to the page (addPerson invoked)
-    if((lastListedPerson.getAttribute("data_person_id") == elementPersonId)){
-      console.log("last listed person");
-      // See if this page is updated from an addPerson call
-      // There is a response in the notices - includes id of person added.
-      const notice = this.requestNoticeTarget;
-      console.log("notice: ", notice);
-      var noticeText = notice.textContent;
-      console.log("noticeText: ", noticeText);     
-      if(noticeText != ""){
-        console.log("noticeText has something ", noticeText);
-        var localAddedPersonId = noticeText.match(/(\d+)/)[1]; 
-        console.log("localAddedPersonId: ", localAddedPersonId);
-        // see if this screen added this person
-        if(elementPersonId == localAddedPersonId){
-          // then select this person as if someone click to select person
-          //var flagThisScreenAddedPerson = true;
-          this.selectPersonWithNode(element.firstElementChild);
-        }
+    //if((lastListedPerson.getAttribute("data_person_id") == elementPersonId)){
+    //console.log("last listed person");
+    // See if this page is updated from an addPerson call
+    // There is a response in the notices - includes id of person added.
+    //const notice = this.requestNoticePersonTarget;
+    //console.log("notice: ", notice);
+    //var noticeText = notice.textContent;
+    //console.log("noticeText: ", noticeText);     
+    if(noticePerson != ""){
+      console.log("noticeText has something ", noticePerson);
+      var localAddedPersonId = noticePerson.match(/(\d+)/)[1]; 
+      console.log("localAddedPersonId: ", localAddedPersonId);
+      // see if this screen added this person
+      if(elementPersonId == localAddedPersonId){
+        // then select this person as if someone click to select person
+        //var flagThisScreenAddedPerson = true;
+        this.selectPersonWithNode(element.firstElementChild);
       }
     }
+    //}
     // If the person element being updated is the
     // currently selected (highlighted) person. 
     // Update generally trigered by status change for a person.
@@ -144,29 +151,28 @@ export default class extends Controller {
   // select person and put details in ordering section
   selectPersonWithNode(personNode){
     console.log("selectPersonWithNode called");
-    console.log("selectPerson called")
     //clear the flash notice html div field
     this.clearFlash();
-    console.log("personNode: ", personNode);
+    //console.log("personNode: ", personNode);
     //const thisPersonId = personNode.parentNode.getAttribute("data-person-selected");
     const thisPersonId = personNode.parentNode.getAttribute("data_person_id");
-    console.log("thisPersonId: ", thisPersonId);
+    //console.log("thisPersonId: ", thisPersonId);
     //check if this person is already selected.
     //<div id="people" data-filter-target="people" data-person-selected="">
     const peopleInfo = this.peopleTarget;
-    console.log("peopleInfo: ", peopleInfo);
+    //console.log("peopleInfo: ", peopleInfo);
     const thisSelectedPersonId = peopleInfo.getAttribute("data_person_selected");
-    console.log("thisSelectedPersonId: ", thisSelectedPersonId);
+    //console.log("thisSelectedPersonId: ", thisSelectedPersonId);
     // get an array of all the nodes containing each person
     const allPeople  =  this.personTargets;
     if(thisSelectedPersonId){             // something selected
       if(thisSelectedPersonId == thisPersonId){      // deselection an already selected person
-        console.log("this person already selected", thisSelectedPersonId);
+        //console.log("this person already selected", thisSelectedPersonId);
         // simply deselect this person.
         this.deSelectOnePerson(personNode, peopleInfo);
         this.dePopulateRequestForm(personNode);
       }else{                                         // selecting a different person
-        console.log("selected", thisSelectedPersonId);
+        //console.log("selected", thisSelectedPersonId);
         //need to deselect everything!!!
         // and select this person
         this.deselectAllPeople();
@@ -174,7 +180,7 @@ export default class extends Controller {
         this.populateRequestForm(personNode);
       }   
     }else{                                 // no current person selected
-      console.log("nothing selected");
+      //console.log("nothing selected");
       // use all the existing processing.
       this.deselectAllPeople();
       // show what is selected by changing text colour
@@ -483,7 +489,11 @@ export default class extends Controller {
   // clear flash notice
   clearFlash(){
     //clear the flash notice html div field
-    const requestNoticeFields = this.requestNoticeTargets; 
+    var requestNoticeFields = this.requestNoticeTargets; 
+    [...requestNoticeFields].forEach(rf=>{
+      rf.innerText = "";
+    });
+    requestNoticeFields = this.requestNoticePersonTargets; 
     [...requestNoticeFields].forEach(rf=>{
       rf.innerText = "";
     });

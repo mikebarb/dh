@@ -45,7 +45,8 @@ class StoresController < ApplicationController
   end
 
   # CREATE /stores/orderdrink
-  # this will create a drink for this  person - person entry already exists
+  # this will create or cancel a drink for this person 
+  # - person entry already exists
   def orderdrink
     #byebug
     logger.debug params.inspect
@@ -118,11 +119,6 @@ class StoresController < ApplicationController
      @orders = Order
                .all
 #               .include ("person")
-  end
-
-  # GET /stores/ready
-  def ready
-    @person = Person.new
   end
 
   # GET /stores/brewster

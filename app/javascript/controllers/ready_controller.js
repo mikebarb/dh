@@ -29,26 +29,10 @@ export default class extends Controller {
       console.log("personElementId: ", personElementId);
       var personChildren = formChildren[1].children;
       console.log("personChildren: ", personChildren);
-      //personChildren[6].classList.remove("flex");
-      //personChildren[6].classList.add("hidden");
-
       //console.log(streamElement.target);
       //console.log("personChildren: ", personChildren);
       fallbackToDefaultActions(streamElement)
       this.displaySingle(personElementId);
-
-/*      
-      if (streamElement.action == "append") {
-        const personElement = streamElement.templateContent.firstElementChild.firstElementChild;
-        //console.log("personElement: ", personElement)
-        this.onUpdate(personElement);
-        this.doSort();    // of people
-      }else if (["update", "replace"].includes(streamElement.action)) {
-        const personElement = streamElement.templateContent.firstElementChild.firstElementChild;
-        //console.log("personElement: ", personElement)
-        this.onUpdate(personElement);
-      }
-*/
     }
   }
 
@@ -85,8 +69,7 @@ export default class extends Controller {
     theBody.classList.remove("bg-zinc-100");
     var theURL = 'ready_background_autumn.jpg';
     theBody.classList.add("bg-[url(\'ready_background_autumn.jpg\')]")
-    theBody.classList.add( "bg-no-repeat", "bg-center", "bg-fixed");
-    
+    theBody.classList.add( "bg-no-repeat", "bg-center", "bg-fixed", "text-8xl");
   }
 
   // this invokes the getOrders() process when a new element 

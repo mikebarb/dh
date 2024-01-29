@@ -26,7 +26,6 @@ class Order < ApplicationRecord
           ) last_by_person
           ON orders.id = last_by_person.id
           AND orders.person_id = last_by_person.person_id
-          WHERE NOT(orders.status = 'cancelled')
         ) orders
       SQL
     )

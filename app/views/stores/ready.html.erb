@@ -26,6 +26,7 @@ bg-fixed      Possibly make it parallax
           </section>
         
           <section class="m-2 w-full">
+            <div class="w-full bg-black text-white text-center"><%= @myUrl %></div>
             <%= turbo_stream_from 'orders' %>
             <div id="orders" class="flex flex-col w-full">
               <% @orders.each do |order| %>
