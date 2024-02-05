@@ -1,6 +1,6 @@
 class StoresController < ApplicationController
 
-  # GET /shops/admin
+  # GET /stores/admin
   def admin
   end
 

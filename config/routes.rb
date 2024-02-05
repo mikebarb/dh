@@ -3,15 +3,16 @@ Rails.application.routes.draw do
   resources :people do 
     resources :orders
   end
-
-  get 'stores/front', as: :shop_front
-  get 'stores/back',  as: :shop_back
-  get 'stores/brewster', as: :shop_brewster
-  get 'stores/ready', as: :shop_ready
-  post 'stores/orderdrink', as: :stores_orderdrink
-  post 'stores/addperson', as: :stores_addperson
-  post 'stores/updatestatus', as: :stores_updatestatus
-
+  get  'stores/front',        to: 'stores#front',         as: :stores_front
+  get  'stores/brewster',     to: 'stores#brewster',      as: :stores_brewster
+  get  'stores/ready',        to: 'stores#ready',         as: :stores_ready
+  post 'stores/orderdrink',   to: 'stores#orderdrink',    as: :stores_orderdrink
+  post 'stores/addperson',    to: 'stores#addperson',     as: :stores_addperson
+  post 'stores/updatestatus', to: 'stores#updatestatus',  as: :stores_updatestatus
+  get  'stores/admin',        to: 'stores#admin',         as: :stores_admin
+  delete 'orders/:id',        to: 'orders#destroy',       as: :order
+  get  'buttonshelp',        to: 'buttons#help',          as: :buttonshelp        
+ 
   # Defines the root path route ("/")
-  root 'shop#front'
+  root 'stores#front'
 end

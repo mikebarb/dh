@@ -1,26 +1,24 @@
-<div id="<%= dom_id button %>" class="flex even:bg-green-50 odd:bg-green-250">
-  <div class="w-1/12 break-normal block font-medium mb-1">
+<div id="<%= dom_id button %>" class="flex even:bg-green-50 odd:bg-green-250 text-black">
+  <div class="w-1/12 break-normal block mb-1">
     <%= button.id %>
   </div>
   
-  <div class="w-3/12 break-normal block font-medium mb-1">
+  <div class="w-3/12 break-normal block mb-1">
     <%= button.name %>
   </div>
 
-  <div class="w-2/12 break-normal block font-medium mb-1">
+  <div class="w-2/12 break-normal block mb-1">
     <%= button.group %>
   </div>
 
-  <div class="w-4/12 break-normal block font-medium mb-1">
+  <div class="w-4/12 break-normal block mb-1">
     <%= button.enable %>
   </div>
 
-  <div class="w-1/12 break-normal block font-medium mb-1">
+  <div class="w-1/12 break-normal block mb-1">
     <%= button.seq %>
   </div>
-
-  <% if action_name != "show" %>
-    <%= link_to "Show", button, class: "border-2 border-green-500 rounded-full px-5 hover:bg-green-500 inline-block font-medium" %>
+  <div class="w-1/12">
     <%= link_to 'Edit', edit_button_path(button), class: "border-2 border-green-500 rounded-full ml-2 px-5 hover:bg-green-500 inline-block font-medium" %>
-  <% end %>
+  </div>
 </div>

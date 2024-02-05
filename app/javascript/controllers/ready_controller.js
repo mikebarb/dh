@@ -68,7 +68,8 @@ export default class extends Controller {
     console.log("theBody: ", theBody);
     theBody.classList.remove("bg-zinc-100");
     var theURL = 'ready_background_autumn.jpg';
-    theBody.classList.add("bg-[url(\'ready_background_autumn.jpg\')]")
+    theBody.classList.add("bg-[url(ready_background_autumn.jpg)]")
+    //theBody.classList.add("bg-[url(#theURL)]")
     theBody.classList.add( "bg-no-repeat", "bg-center", "bg-fixed", "text-8xl");
   }
 

@@ -11,12 +11,15 @@
     </div>
   <% end %>
 
-  <div>
-    <%= form.label :name, style: "display: block" %>
-    <%= form.text_field :name %>
-  </div>
+  <div class="flex text-center items-center">
+    <div>
+      <%= form.text_field :name %>
+    </div>
 
-  <div>
-    <%= form.submit %>
+    <div class="p-2 m-2 bg-blue-300 hover:bg-blue-800 rounded-full border-2 border-blue-800 text-center"> 
+      <%= form.submit %>
+    </div>
   </div>
 <% end %>
+
+

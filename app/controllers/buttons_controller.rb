@@ -1,9 +1,14 @@
 class ButtonsController < ApplicationController
   before_action :set_button, only: %i[ show edit update destroy ]
 
+  # GET /button/help
+  def help
+  end
+
   # GET /buttons or /buttons.json
   def index
-    @buttons = Button.all
+    @buttons = Button
+               .order(:group, :seq) 
   end
 
   # GET /buttons/1 or /buttons/1.json
@@ -25,7 +30,7 @@ class ButtonsController < ApplicationController
 
     respond_to do |format|
       if @button.save
-        format.html { redirect_to button_url(@button), notice: "Button was successfully created." }
+        format.html { redirect_to buttons_url, notice: "Button was successfully created." }
         format.json { render :show, status: :created, location: @button }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -38,7 +43,7 @@ class ButtonsController < ApplicationController
   def update
     respond_to do |format|
       if @button.update(button_params)
-        format.html { redirect_to button_url(@button), notice: "Button was successfully updated." }
+        format.html { redirect_to buttons_url, notice: "Button was successfully updated." }
         format.json { render :show, status: :ok, location: @button }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -50,7 +55,6 @@ class ButtonsController < ApplicationController
   # DELETE /buttons/1 or /buttons/1.json
   def destroy
     @button.destroy
-
     respond_to do |format|
       format.html { redirect_to buttons_url, notice: "Button was successfully destroyed." }
       format.json { head :no_content }
