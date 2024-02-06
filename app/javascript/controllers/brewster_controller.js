@@ -5,12 +5,16 @@ export default class extends Controller {
   
   connect() {
     console.log("brewster_controller connected", this.element)
+  
+    addEventListener("turbo:before-stream-render",
+    (event) => {this.getOrders() })
+  
   }
   // this invokes the getOrders() process when a new element 
   // of target = order is loaded. Thus works with status updates.
   // refer: https://labzero.com/blog/hotwire-decisions-when-to-use-turbo-frames-turbo-streams-and-stimulus
   orderTargetConnected(element) {
-    this.getOrders();
+    //this.getOrders();
   }
 
   //--------------------------------------------------------------
@@ -121,6 +125,11 @@ export default class extends Controller {
   // - this function needs to be called after the turboframe refresh
   getOrders() {
     console.log("=== getOrders called ===")
+    // only execute if we are on the "stores/brewster" page 
+    if(!document.getElementById("brewster")){
+      console.log("not brewster page - exiting getOrders()");
+      return;
+    }
     var countNew   = 0;
     var countReady = 0;
     var countDone  = 0;

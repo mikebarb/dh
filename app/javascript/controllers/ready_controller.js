@@ -14,6 +14,11 @@ export default class extends Controller {
   beforeStreamRender(event){
     console.log("beforeStreamTender");
     console.log(event);
+    // only execute if we are on the "stores/ready" page 
+    if(!document.getElementById("ready")){
+      console.log("not ready page - exiting beforeStreamRender()");
+      return;
+    }
     const fallbackToDefaultActions = event.detail.render
     event.detail.render = (streamElement) => {
       console.log("streamElement", streamElement);

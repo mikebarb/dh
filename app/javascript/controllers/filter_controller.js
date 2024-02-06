@@ -20,8 +20,13 @@ export default class extends Controller {
   }
 
   beforeStreamRender(event){
-    console.log("beforeStreamTender");
+    console.log("beforeStreamRender");
     console.log(event);
+    // only execute if we are on the "stores/front" page 
+    if(!document.getElementById("front")){
+      console.log("not front page - exiting beforeStreamRender()");
+      return;
+    }
     const fallbackToDefaultActions = event.detail.render
     event.detail.render = (streamElement) => {
       console.log("streamElement", streamElement);
