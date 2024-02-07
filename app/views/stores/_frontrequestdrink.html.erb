@@ -1,6 +1,6 @@
 <turbo-frame id="turbo_request_order">
     <% #byebug %>
-    <%= form_with url: "stores/orderdrink", method: :post do |form| %>
+    <%= form_with url: stores_orderdrink_path, method: :post do |form| %>
     <div class="flex flex-col"> 
         <%= form.hidden_field :id, value:"", :data => { :filter_target => 'requestPersonId' } %>
         <div class="flex">

@@ -13,7 +13,7 @@
   <% elsif order.status == "cancelled" %>
     <div class="bg-white my-2 py-2 border-l-4 border-solid border-<%= colourCancelled %>" >
   <% end %>
-        <%= form_with url: "updatestatus", method: :post do |form| %> 
+        <%= form_with url: stores_updatestatus_path, method: :post do |form| %> 
             <% if flash.notice %>
                 <div id="flashNotice" style="color: green"><%= flash.notice %></div>
             <% else %>
